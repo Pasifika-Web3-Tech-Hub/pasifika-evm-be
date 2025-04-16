@@ -2,5 +2,10 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+solc-version = "0.8.19"
+[profile.rpc-ndpoints]
+sepolia = "https://rpc.sepolia.linea.build"
+[etherscan]
+linea-sepolia = { key = "${LINEASCAN_API_KEY}" }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
