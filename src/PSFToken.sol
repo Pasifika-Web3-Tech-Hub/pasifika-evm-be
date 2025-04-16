@@ -2,18 +2,17 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
 
 /**
  * @title PSFToken
  * @dev Implementation of the PASIFIKA Token (PSF)
  * This token implements governance extensions, vesting schedules, and staking
  */
-contract PSFToken is ERC20Votes, AccessControl, Pausable {
-    using SafeMath for uint256;
-
+contract PSFToken is ERC20, ERC20Permit, ERC20Votes, AccessControl, Pausable {
     // Constants
     uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10**18; // 1 billion tokens
     
@@ -58,7 +57,10 @@ contract PSFToken is ERC20Votes, AccessControl, Pausable {
     /**
      * @dev Constructor - initializes the token and roles
      */
-    constructor() ERC20("PASIFIKA Token", "PSF") ERC20Permit("PSFToken") {
+    constructor()
+        ERC20("PASIFIKA Token", "PSF")
+        ERC20Permit("PASIFIKA Token")
+    {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
@@ -156,7 +158,7 @@ contract PSFToken is ERC20Votes, AccessControl, Pausable {
         uint256 releasable = calculateReleasableAmount(beneficiary);
         require(releasable > 0, "PSFToken: no tokens are due for release");
         
-        schedule.releasedAmount = schedule.releasedAmount.add(releasable);
+        schedule.releasedAmount = schedule.releasedAmount + releasable;
         
         // Transfer tokens to beneficiary
         _transfer(address(this), beneficiary, releasable);
@@ -179,13 +181,13 @@ contract PSFToken is ERC20Votes, AccessControl, Pausable {
         
         // Release any due tokens first
         if (releasable > 0) {
-            schedule.releasedAmount = schedule.releasedAmount.add(releasable);
+            schedule.releasedAmount = schedule.releasedAmount + releasable;
             _transfer(address(this), beneficiary, releasable);
             emit VestingTokensReleased(beneficiary, releasable);
         }
         
         // Calculate unreleased amount
-        uint256 unreleased = schedule.totalAmount.sub(schedule.releasedAmount);
+        uint256 unreleased = schedule.totalAmount - schedule.releasedAmount;
         
         // Mark as revoked
         schedule.revoked = true;
@@ -211,20 +213,20 @@ contract PSFToken is ERC20Votes, AccessControl, Pausable {
         }
         
         // Before cliff, nothing is releasable
-        if (block.timestamp < schedule.startTime.add(schedule.cliffDuration)) {
+        if (block.timestamp < schedule.startTime + schedule.cliffDuration) {
             return 0;
         }
         
         // After vesting has completed, all remaining tokens are releasable
-        if (block.timestamp >= schedule.startTime.add(schedule.duration)) {
-            return schedule.totalAmount.sub(schedule.releasedAmount);
+        if (block.timestamp >= schedule.startTime + schedule.duration) {
+            return schedule.totalAmount - schedule.releasedAmount;
         }
         
         // Calculate releasable amount based on linear vesting
-        uint256 timeFromStart = block.timestamp.sub(schedule.startTime);
-        uint256 vestedAmount = schedule.totalAmount.mul(timeFromStart).div(schedule.duration);
+        uint256 timeFromStart = block.timestamp - schedule.startTime;
+        uint256 vestedAmount = schedule.totalAmount * timeFromStart / schedule.duration;
         
-        return vestedAmount.sub(schedule.releasedAmount);
+        return vestedAmount - schedule.releasedAmount;
     }
     
     /**
@@ -301,7 +303,7 @@ contract PSFToken is ERC20Votes, AccessControl, Pausable {
                 uint256 durationBonus = remainingTime * 1e18 / 30 days;
                 uint256 stakeWeight = userStake.amount * (1e18 + durationBonus) / 1e18;
                 
-                weight = weight.add(stakeWeight);
+                weight = weight + stakeWeight;
             }
         }
         
@@ -320,7 +322,7 @@ contract PSFToken is ERC20Votes, AccessControl, Pausable {
             Stake memory userStake = stakes[account][i];
             
             if (userStake.active) {
-                total = total.add(userStake.amount);
+                total = total + userStake.amount;
             }
         }
         
@@ -344,19 +346,25 @@ contract PSFToken is ERC20Votes, AccessControl, Pausable {
     }
     
     /**
-     * @dev Hook that is called before any transfer of tokens
-     * @param from address The address which you want to send tokens from
-     * @param to address The address which you want to transfer to
-     * @param amount uint256 the amount of tokens to be transferred
+     * @dev OpenZeppelin 5.x+ override for transfer logic
      */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal override whenNotPaused {
-        super._beforeTokenTransfer(from, to, amount);
+    function _update(address from, address to, uint256 value)
+        internal
+        override(ERC20, ERC20Votes)
+    {
+        require(!paused(), "PSFToken: token transfer while paused");
+        super._update(from, to, value);
     }
-    
+
+    function nonces(address owner)
+        public
+        view
+        override(ERC20Permit, Nonces)
+        returns (uint256)
+    {
+        return super.nonces(owner);
+    }
+
     /**
      * @dev Returns the name of the token.
      */
