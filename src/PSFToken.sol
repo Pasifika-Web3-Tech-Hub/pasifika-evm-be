@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
+import "forge-std/console.sol";
 
 /**
  * @title PSFToken
@@ -53,6 +54,7 @@ contract PSFToken is ERC20, ERC20Permit, ERC20Votes, AccessControl, Pausable {
     event Staked(address indexed user, uint256 amount, uint256 duration, uint256 stakeId);
     event Unstaked(address indexed user, uint256 amount, uint256 stakeId);
     event Burned(address indexed burner, uint256 amount);
+    event DebugAddress(address sender);
     
     /**
      * @dev Constructor - initializes the token and roles
@@ -127,9 +129,9 @@ contract PSFToken is ERC20, ERC20Permit, ERC20Votes, AccessControl, Pausable {
         require(amount > 0, "PSFToken: amount is 0");
         require(duration > 0, "PSFToken: duration is 0");
         require(duration >= cliffDuration, "PSFToken: cliff is longer than duration");
-        
+
         uint256 startTime = block.timestamp;
-        
+
         vestingSchedules[beneficiary] = VestingSchedule({
             totalAmount: amount,
             startTime: startTime,
@@ -139,10 +141,10 @@ contract PSFToken is ERC20, ERC20Permit, ERC20Votes, AccessControl, Pausable {
             revocable: revocable,
             revoked: false
         });
-        
-        // Transfer tokens to this contract
-        require(transferFrom(msg.sender, address(this), amount), "PSFToken: transfer failed");
-        
+
+        // Instead of transferFrom, require the contract is pre-funded
+        require(balanceOf(address(this)) >= amount, "PSFToken: contract not funded");
+
         emit VestingScheduleCreated(beneficiary, amount, startTime, duration);
     }
     
@@ -352,7 +354,7 @@ contract PSFToken is ERC20, ERC20Permit, ERC20Votes, AccessControl, Pausable {
         internal
         override(ERC20, ERC20Votes)
     {
-        require(!paused(), "PSFToken: token transfer while paused");
+        _requireNotPaused(); 
         super._update(from, to, value);
     }
 
