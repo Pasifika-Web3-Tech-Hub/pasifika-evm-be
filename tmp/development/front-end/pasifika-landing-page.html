@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasifika Web3 Tech Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E74B5;
+            --secondary-color: #6AA84F;
+            --accent-color: #A64D79;
+            --dark-blue: #0B5394;
+            --light-blue: #9FC5E8;
+            --green: #B6D7A8;
+            --dark-green: #274E13;
+            --purple: #D5A6BD;
+            --dark-purple: #4C1130;
+            --gold: #FFD966;
+            --dark-gold: #7F6000;
+            --orange: #F9CB9C;
+            --dark-orange: #B45F06;
+            --teal: #A2C4C9;
+            --dark-teal: #134F5C;
+            --light-text: #F3F6F9;
+            --dark-text: #333333;
+            --background: #F9FAFC;
+            --card-bg: #FFFFFF;
+            --header-height: 80px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+            background: var(--background);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            height: var(--header-height);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .logo-accent {
+            color: var(--accent-color);
+        }
+
+        .nav-menu {
+            display: flex;
+        }
+
+        .nav-item {
+            margin-left: 30px;
+        }
+
+        .nav-link {
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-blue);
+            border-color: var(--dark-blue);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--green) 100%);
+            padding: 150px 0 100px;
+            color: var(--dark-text);
+        }
+
+        .hero-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-content {
+            flex: 1;
+            padding-right: 50px;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark-blue);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .hero-image {
+            flex: 1;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background-color: var(--card-bg);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            color: var(--dark-blue);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            max-width: 800px;
+            margin: -30px auto 50px;
+            color: var(--dark-text);
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--background);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light-blue);
+            border-radius: 50%;
+        }
+
+        .feature-icon img {
+            width: 35px;
+            height: 35px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-blue);
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            color: var(--dark-text);
+        }
+
+        /* Token Section */
+        .token {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--teal) 0%, var(--light-blue) 100%);
+        }
+
+        .token-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .token-content {
+            flex: 1;
+            padding-right: 50px;
+        }
+
+        .token-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark-blue);
+        }
+
+        .token-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .token-features {
+            margin-bottom: 30px;
+        }
+
+        .token-feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .token-feature-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-weight: bold;
+        }
+
+        .token-chart {
+            flex: 1;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .token-chart img {
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        /* Marketplace Preview */
+        .marketplace-preview {
+            padding: 100px 0;
+            background-color: var(--card-bg);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .preview-card {
+            background-color: var(--background);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .preview-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .preview-card:hover .preview-image img {
+            transform: scale(1.1);
+        }
+
+        .preview-content {
+            padding: 20px;
+        }
+
+        .preview-category {
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+        }
+
+        .preview-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-blue);
+        }
+
+        .preview-price {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .price-amount {
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .price-token {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .view-more {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        /* Community Stats */
+        .stats {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--light-blue) 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .stat-title {
+            font-size: 1rem;
+            color: var(--dark-text);
+        }
+
+        /* Cultural Heritage */
+        .cultural-heritage {
+            padding: 100px 0;
+            background-color: var(--card-bg);
+        }
+
+        .heritage-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .heritage-image {
+            flex: 1;
+            padding-right: 50px;
+        }
+
+        .heritage-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .heritage-content {
+            flex: 1;
+        }
+
+        .heritage-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark-blue);
+        }
+
+        .heritage-text {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .heritage-points {
+            margin-bottom: 30px;
+        }
+
+        .heritage-point {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .heritage-point-icon {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            margin-right: 15px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-weight: bold;
+        }
+
+        /* Newsletter */
+        .newsletter {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--orange) 100%);
+        }
+
+        .newsletter-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .newsletter-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark-gold);
+        }
+
+        .newsletter-text {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: var(--dark-text);
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark-blue);
+            color: var(--light-text);
+            padding: 70px 0 20px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 50px;
+        }
+
+        .footer-about h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--light-blue);
+        }
+
+        .footer-about p {
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--light-text);
+            opacity: 0.8;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .social-link:hover {
+            background-color: var(--primary-color);
+        }
+
+        .footer-links h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--light-blue);
+        }
+
+        .footer-link {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--light-text);
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+        }
+
+        .copyright {
+            margin-top: 50px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: var(--light-text);
+            opacity: 0.8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                position: relative;
+            }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: var(--header-height);
+                left: 0;
+                width: 100%;
+                background-color: var(--card-bg);
+                flex-direction: column;
+                padding: 20px 0;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-item {
+                margin: 10px 0;
+                text-align: center;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .hero-container {
+                flex-direction: column;
+            }
+
+            .hero-content {
+                padding-right: 0;
+                margin-bottom: 50px;
+                text-align: center;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .token-container {
+                flex-direction: column;
+            }
+
+            .token-content {
+                padding-right: 0;
+                margin-bottom: 50px;
+                text-align: center;
+            }
+
+            .token-features {
+                max-width: 400px;
+                margin: 0 auto 30px;
+            }
+
+            .heritage-container {
+                flex-direction: column-reverse;
+            }
+
+            .heritage-image {
+                padding-right: 0;
+                margin-top: 50px;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-input {
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <img src="/api/placeholder/50/50" alt="Pasifika Logo">
+                <span class="logo-text">PASIFIKA <span class="logo-accent">Web3</span></span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Marketplace</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Token</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Community</a></li>
+                    <li class="nav-item"><a href="#" class="btn btn-primary">Connect Wallet</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-toggle">☰</div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">A Blockchain Ecosystem for Pacific Island Communities</h1>
+                <p class="hero-subtitle">Connecting artisans, farmers, and content creators with global markets through our PASIFIKA token-powered decentralized marketplace.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary">Explore Marketplace</a>
+                    <a href="#" class="btn btn-secondary">Learn About PSF Token</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="/api/placeholder/600/400" alt="Pacific Island Marketplace">
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Empowering Pacific Island Communities</h2>
+            <p class="section-subtitle">Our decentralized platform creates sustainable economic opportunities while preserving cultural heritage.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="/api/placeholder/35/35" alt="Marketplace Icon">
+                    </div>
+                    <h3 class="feature-title">Global Marketplace</h3>
+                    <p class="feature-text">Connect directly with buyers worldwide for handicrafts, digital content, and agricultural products without intermediaries.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="/api/placeholder/35/35" alt="Token Icon">
+                    </div>
+                    <h3 class="feature-title">PASIFIKA Token</h3>
+                    <p class="feature-text">Our native PSF token powers all marketplace transactions, staking, governance, and rewards for ecosystem participants.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="/api/placeholder/35/35" alt="Cultural Icon">
+                    </div>
+                    <h3 class="feature-title">Cultural Protection</h3>
+                    <p class="feature-text">Built-in verification and metadata systems preserve cultural integrity and ensure fair attribution and compensation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="/api/placeholder/35/35" alt="Node Icon">
+                    </div>
+                    <h3 class="feature-title">Node Operation</h3>
+                    <p class="feature-text">Earn PSF rewards by running a node to process transactions, validate data, and support the network.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="/api/placeholder/35/35" alt="Governance Icon">
+                    </div>
+                    <h3 class="feature-title">Community Governance</h3>
+                    <p class="feature-text">Token holders participate in platform decisions through transparent on-chain voting and specialized working groups.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="/api/placeholder/35/35" alt="AI Icon">
+                    </div>
+                    <h3 class="feature-title">AI-Powered</h3>
+                    <p class="feature-text">TachyonX-aligned AI agents enhance marketplace efficiency through intelligent matchmaking and intent fulfillment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="token">
+        <div class="container token-container">
+            <div class="

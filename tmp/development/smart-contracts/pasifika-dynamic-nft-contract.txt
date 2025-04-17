@@ -1,0 +1,127 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
+/**
+ * @title PasifikaDynamicNFT
+ * @dev Implementation of dynamic NFTs for PASIFIKA ecosystem
+ * Supports state changes, cultural metadata, and verification
+ */
+contract PasifikaDynamicNFT is ERC721URIStorage, AccessControl, Pausable {
+    using Counters for Counters.Counter;
+    using Strings for uint256;
+
+    // Roles
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant UPDATER_ROLE = keccak256("UPDATER_ROLE");
+    bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
+    bytes32 public constant VALIDATOR_ROLE = keccak256("VALIDATOR_ROLE");
+    bytes32 public constant CULTURAL_AUTHORITY_ROLE = keccak256("CULTURAL_AUTHORITY_ROLE");
+
+    // Counters
+    Counters.Counter private _tokenIds;
+
+    // Cultural sensitivity levels
+    enum CulturalSensitivityLevel {
+        PublicDomain,         // Freely shareable
+        CommunityRestricted,  // Limited distribution with attribution
+        CeremonialRestricted, // Special access controls
+        SacredProtected       // Not eligible for commercial marketplace
+    }
+
+    // Item types
+    enum ItemType {
+        PhysicalGood,
+        DigitalContent,
+        DataResource,
+        Service
+    }
+
+    // State structures
+    struct TokenState {
+        bytes data;           // Current state data
+        uint256 timestamp;    // When state was last updated
+        address updater;      // Who updated the state
+    }
+
+    struct CulturalMetadata {
+        string culture;                     // e.g., "Samoa", "Fiji", "Tonga"
+        string communityOrigin;             // Specific community within culture
+        CulturalSensitivityLevel level;     // Sensitivity classification
+        bool isVerified;                    // Verified by cultural authority
+        address verifier;                   // Who verified it
+        uint256 verificationTimestamp;      // When it was verified
+        string culturalContext;             // Additional cultural information
+        bool hasUsageRestrictions;          // Whether there are restrictions
+        mapping(uint8 => bool) allowedUsages; // Specific allowed usages
+    }
+
+    // Main token metadata
+    struct TokenMetadata {
+        ItemType itemType;
+        string contentHash;      // IPFS hash for original content
+        string location;         // Physical location (for physical goods)
+        uint256 creationTime;    // When token was created
+        bool isVerified;         // Whether token has been verified
+        address creator;         // Original creator
+    }
+
+    // Mappings
+    mapping(uint256 => TokenState[]) private _tokenStateHistory; // State history for each token
+    mapping(uint256 => TokenMetadata) private _tokenMetadata;
+    mapping(uint256 => mapping(address => bool)) private _tokenAccess; // Access permissions
+    
+    // Events
+    event TokenMinted(
+        uint256 indexed tokenId,
+        address indexed creator,
+        ItemType itemType,
+        CulturalSensitivityLevel sensitivityLevel
+    );
+    
+    event StateUpdated(
+        uint256 indexed tokenId,
+        bytes newState,
+        uint256 timestamp,
+        address updater
+    );
+    
+    event CulturalVerification(
+        uint256 indexed tokenId,
+        address indexed verifier,
+        uint256 timestamp
+    );
+    
+    event TokenVerification(
+        uint256 indexed tokenId,
+        address indexed verifier,
+        uint256 timestamp
+    );
+    
+    event AccessGranted(
+        uint256 indexed tokenId,
+        address indexed user
+    );
+    
+    event AccessRevoked(
+        uint256 indexed tokenId,
+        address indexed user
+    );
+    
+    event CulturalContextAdded(
+        uint256 indexed tokenId,
+        string context
+    );
+
+    // Constructor
+    constructor() ERC721("PASIFIKA Dynamic NFT", "PNFT") {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, msg.sender);
+        _grantRole(UPDATER_ROLE,
