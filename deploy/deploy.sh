@@ -1,449 +1,245 @@
 #!/bin/bash
 
-# Pasifika Web3 Tech Hub - Deployment Script
-# This script helps deploy and verify smart contracts on Linea Sepolia testnet
+# Pasifika Web3 Tech Hub - Official Keystore Deployment Script
+# For deploying OpenZeppelin v5.3.0 contracts to Linea Sepolia using keystore
 
-# Text colors
+# Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Config variables - modify these as needed
-RPC_URL="https://rpc.sepolia.linea.build"
-VERIFIER_URL="https://api-sepolia.lineascan.build/api"
-ACCOUNT_NAME="deployer-account" # Your Foundry account name
-ETHERSCAN_API_KEY="LINEASCAN_API_KEY" # Replace with your actual API key
+echo -e "${BLUE}=== Pasifika Web3 Tech Hub - Official Contract Deployment ===${NC}"
 
-# Contract paths and names
-PSF_TOKEN="src/PSFToken.sol:PSFToken"
-PSF_STAKING="src/PSFStaking.sol:PSFStaking"
-PASIFIKA_DYNAMIC_NFT="src/PasifikaDynamicNFT.sol:PasifikaDynamicNFT"
-PASIFIKA_MARKETPLACE="src/PasifikaMarketplace.sol:PasifikaMarketplace"
-
-# Frontend directory for saving contract addresses
-FRONTEND_CONTRACT_DIR="/home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-fe/deployed_contracts"
-
-# Contract deployment constructor arguments
-declare -A CONTRACT_ARGS
-# Initially empty - to be set during deployment flow
-
-print_header() {
-    echo -e "\n${BLUE}===========================================================${NC}"
-    echo -e "${BLUE}$1${NC}"
-    echo -e "${BLUE}===========================================================${NC}\n"
-}
-
-print_success() {
-    echo -e "${GREEN}$1${NC}"
-}
-
-print_warning() {
-    echo -e "${YELLOW}$1${NC}"
-}
-
-print_error() {
-    echo -e "${RED}$1${NC}"
-}
-
-check_dependencies() {
-    print_header "Checking dependencies"
-    
-    if ! command -v forge &> /dev/null; then
-        print_error "Foundry not found! Please install Foundry first."
-        exit 1
-    fi
-    
-    if [ ! -f "foundry.toml" ]; then
-        print_error "foundry.toml not found! Please run this script from the project root."
-        exit 1
-    fi
-    
-    print_success "All dependencies satisfied!"
-}
-
-setup_environment() {
-    print_header "Setting up environment"
-    
-    # Prompt for API key if using placeholder
-    if [[ "$ETHERSCAN_API_KEY" == "LINEASCAN_API_KEY" ]]; then
-        read -p "Enter your LineaScan API key: " ETHERSCAN_API_KEY
-    fi
-    
-    # Prompt for account if needed
-    read -p "Use account '$ACCOUNT_NAME' for deployment? (y/n): " use_default_account
-    if [[ "$use_default_account" != "y" ]]; then
-        read -p "Enter the Foundry account name to use: " ACCOUNT_NAME
-    fi
-    
-    # Check if account exists
-    if ! forge account list | grep -q "$ACCOUNT_NAME"; then
-        print_error "Account '$ACCOUNT_NAME' not found in Foundry!"
-        print_warning "Available accounts:"
-        forge account list
-        exit 1
-    fi
-    
-    print_success "Environment set up successfully!"
-}
-
-build_contracts() {
-    print_header "Building contracts"
-    
-    forge build --force
-    
-    if [ $? -ne 0 ]; then
-        print_error "Contract build failed!"
-        exit 1
-    fi
-    
-    print_success "Contracts built successfully!"
-}
-
-deploy_contract() {
-    local contract_path=$1
-    local contract_name=$2
-    local constructor_args=$3
-    
-    echo -e "\nDeploying $contract_name..."
-    
-    local cmd="forge create --rpc-url $RPC_URL --account $ACCOUNT_NAME --broadcast --verify --verifier-url $VERIFIER_URL --etherscan-api-key $ETHERSCAN_API_KEY $contract_path"
-    
-    if [ ! -z "$constructor_args" ]; then
-        cmd="$cmd --constructor-args $constructor_args"
-    fi
-    
-    echo "Executing: $cmd"
-    
-    # Execute the command and capture output
-    local output
-    output=$(eval $cmd 2>&1)
-    local exit_code=$?
-    
-    echo "$output"
-    
-    if [ $exit_code -ne 0 ]; then
-        print_error "Failed to deploy $contract_name!"
-        return 1
-    fi
-    
-    # Extract deployed address from output
-    local deployed_address
-    deployed_address=$(echo "$output" | grep -oP 'Deployed to: \K0x[a-fA-F0-9]{40}')
-    
-    if [ -z "$deployed_address" ]; then
-        print_warning "Couldn't extract deployed address for $contract_name"
-        return 0
-    fi
-    
-    print_success "$contract_name deployed to: $deployed_address"
-    
-    # Return the deployed address
-    echo "$deployed_address"
-}
-
-deploy_psf_token() {
-    print_header "Deploying PSFToken"
-    
-    # PSFToken constructor doesn't need arguments
-    local psf_token_address
-    psf_token_address=$(deploy_contract "$PSF_TOKEN" "PSFToken")
-    
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
-    
-    CONTRACT_ARGS["PSF_TOKEN_ADDRESS"]=$psf_token_address
-    return 0
-}
-
-deploy_psf_staking() {
-    print_header "Deploying PSFStaking"
-    
-    if [ -z "${CONTRACT_ARGS[PSF_TOKEN_ADDRESS]}" ]; then
-        print_error "PSFToken address not found! Deploy PSFToken first."
-        return 1
-    fi
-    
-    # Get addresses for PSFStaking constructor
-    local psf_token_address="${CONTRACT_ARGS[PSF_TOKEN_ADDRESS]}"
-    local admin_address
-    
-    # Get the address of the account being used
-    admin_address=$(forge account address "$ACCOUNT_NAME" | grep "$ACCOUNT_NAME" | awk '{print $2}')
-    
-    if [ -z "$admin_address" ]; then
-        print_error "Failed to get address for account $ACCOUNT_NAME"
-        return 1
-    fi
-    
-    # Use the same address for rewards distributor initially
-    local rewards_distributor_address=$admin_address
-    
-    # Prepare constructor arguments
-    local constructor_args="$psf_token_address $admin_address $rewards_distributor_address"
-    
-    local psf_staking_address
-    psf_staking_address=$(deploy_contract "$PSF_STAKING" "PSFStaking" "$constructor_args")
-    
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
-    
-    CONTRACT_ARGS["PSF_STAKING_ADDRESS"]=$psf_staking_address
-    return 0
-}
-
-deploy_pasifika_dynamic_nft() {
-    print_header "Deploying PasifikaDynamicNFT"
-    
-    # Get admin address
-    local admin_address
-    admin_address=$(forge account address "$ACCOUNT_NAME" | grep "$ACCOUNT_NAME" | awk '{print $2}')
-    
-    if [ -z "$admin_address" ]; then
-        print_error "Failed to get address for account $ACCOUNT_NAME"
-        return 1
-    fi
-    
-    # Prepare constructor arguments (name, symbol, admin)
-    local constructor_args="\"Pasifika Dynamic NFT\" \"PNFT\" $admin_address"
-    
-    local dynamic_nft_address
-    dynamic_nft_address=$(deploy_contract "$PASIFIKA_DYNAMIC_NFT" "PasifikaDynamicNFT" "$constructor_args")
-    
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
-    
-    CONTRACT_ARGS["DYNAMIC_NFT_ADDRESS"]=$dynamic_nft_address
-    return 0
-}
-
-deploy_pasifika_marketplace() {
-    print_header "Deploying PasifikaMarketplace"
-    
-    if [ -z "${CONTRACT_ARGS[PSF_TOKEN_ADDRESS]}" ]; then
-        print_error "PSFToken address not found! Deploy PSFToken first."
-        return 1
-    fi
-    
-    # Get admin address
-    local admin_address
-    admin_address=$(forge account address "$ACCOUNT_NAME" | grep "$ACCOUNT_NAME" | awk '{print $2}')
-    
-    if [ -z "$admin_address" ]; then
-        print_error "Failed to get address for account $ACCOUNT_NAME"
-        return 1
-    fi
-    
-    # Prepare constructor arguments (payment token, fee percentage, admin address)
-    local psf_token_address="${CONTRACT_ARGS[PSF_TOKEN_ADDRESS]}"
-    local fee_percentage="250" # 2.5% fee
-    
-    local constructor_args="$psf_token_address $fee_percentage $admin_address"
-    
-    local marketplace_address
-    marketplace_address=$(deploy_contract "$PASIFIKA_MARKETPLACE" "PasifikaMarketplace" "$constructor_args")
-    
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
-    
-    CONTRACT_ARGS["MARKETPLACE_ADDRESS"]=$marketplace_address
-    return 0
-}
-
-save_deployment_info() {
-    print_header "Saving deployment information"
-    
-    local timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
-    local deployment_file="./deploy/deployment_$timestamp.txt"
-    
-    cat > "$deployment_file" << EOF
-Pasifika Web3 Tech Hub - Deployment Information
-===============================================
-Timestamp: $(date)
-Network: Linea Sepolia
-RPC URL: $RPC_URL
-
-Deployed Contracts:
-------------------
-PSFToken: ${CONTRACT_ARGS[PSF_TOKEN_ADDRESS]}
-PSFStaking: ${CONTRACT_ARGS[PSF_STAKING_ADDRESS]}
-PasifikaDynamicNFT: ${CONTRACT_ARGS[DYNAMIC_NFT_ADDRESS]}
-PasifikaMarketplace: ${CONTRACT_ARGS[MARKETPLACE_ADDRESS]}
-
-Deployer Address: $(forge account address "$ACCOUNT_NAME" | grep "$ACCOUNT_NAME" | awk '{print $2}')
-EOF
-    
-    print_success "Deployment information saved to: $deployment_file"
-    
-    # Save contract addresses to frontend directory
-    save_contracts_to_frontend
-}
-
-save_contracts_to_frontend() {
-    print_header "Saving contract addresses to frontend directory"
-    
-    # Create the frontend directory if it doesn't exist
-    if [ ! -d "$FRONTEND_CONTRACT_DIR" ]; then
-        mkdir -p "$FRONTEND_CONTRACT_DIR"
-        print_warning "Created frontend contracts directory: $FRONTEND_CONTRACT_DIR"
-    fi
-    
-    # Save PSFToken address
-    if [ ! -z "${CONTRACT_ARGS[PSF_TOKEN_ADDRESS]}" ]; then
-        echo "${CONTRACT_ARGS[PSF_TOKEN_ADDRESS]}" > "$FRONTEND_CONTRACT_DIR/PSFToken.txt"
-        print_success "Saved PSFToken address to $FRONTEND_CONTRACT_DIR/PSFToken.txt"
-    fi
-    
-    # Save PSFStaking address
-    if [ ! -z "${CONTRACT_ARGS[PSF_STAKING_ADDRESS]}" ]; then
-        echo "${CONTRACT_ARGS[PSF_STAKING_ADDRESS]}" > "$FRONTEND_CONTRACT_DIR/PSFStaking.txt"
-        print_success "Saved PSFStaking address to $FRONTEND_CONTRACT_DIR/PSFStaking.txt"
-    fi
-    
-    # Save PasifikaDynamicNFT address
-    if [ ! -z "${CONTRACT_ARGS[DYNAMIC_NFT_ADDRESS]}" ]; then
-        echo "${CONTRACT_ARGS[DYNAMIC_NFT_ADDRESS]}" > "$FRONTEND_CONTRACT_DIR/PasifikaDynamicNFT.txt"
-        print_success "Saved PasifikaDynamicNFT address to $FRONTEND_CONTRACT_DIR/PasifikaDynamicNFT.txt"
-    fi
-    
-    # Save PasifikaMarketplace address
-    if [ ! -z "${CONTRACT_ARGS[MARKETPLACE_ADDRESS]}" ]; then
-        echo "${CONTRACT_ARGS[MARKETPLACE_ADDRESS]}" > "$FRONTEND_CONTRACT_DIR/PasifikaMarketplace.txt"
-        print_success "Saved PasifikaMarketplace address to $FRONTEND_CONTRACT_DIR/PasifikaMarketplace.txt"
-    fi
-    
-    # Also save network information
-    echo "Linea Sepolia" > "$FRONTEND_CONTRACT_DIR/network.txt"
-    print_success "Saved network information to $FRONTEND_CONTRACT_DIR/network.txt"
-    
-    # Save RPC URL
-    echo "$RPC_URL" > "$FRONTEND_CONTRACT_DIR/rpc_url.txt"
-    print_success "Saved RPC URL to $FRONTEND_CONTRACT_DIR/rpc_url.txt"
-    
-    print_success "Contract addresses successfully saved to frontend directory"
-}
-
-deploy_all() {
-    check_dependencies
-    setup_environment
-    build_contracts
-    
-    deploy_psf_token
-    if [ $? -ne 0 ]; then
-        print_error "Failed to deploy PSFToken. Aborting deployment."
-        exit 1
-    fi
-    
-    deploy_psf_staking
-    if [ $? -ne 0 ]; then
-        print_warning "Failed to deploy PSFStaking. Continuing with other contracts."
-    fi
-    
-    deploy_pasifika_dynamic_nft
-    if [ $? -ne 0 ]; then
-        print_warning "Failed to deploy PasifikaDynamicNFT. Continuing with other contracts."
-    fi
-    
-    deploy_pasifika_marketplace
-    if [ $? -ne 0 ]; then
-        print_warning "Failed to deploy PasifikaMarketplace."
-    fi
-    
-    save_deployment_info
-    
-    print_header "Deployment Summary"
-    
-    echo -e "PSFToken: ${GREEN}${CONTRACT_ARGS[PSF_TOKEN_ADDRESS]}${NC}"
-    
-    if [ ! -z "${CONTRACT_ARGS[PSF_STAKING_ADDRESS]}" ]; then
-        echo -e "PSFStaking: ${GREEN}${CONTRACT_ARGS[PSF_STAKING_ADDRESS]}${NC}"
-    else
-        echo -e "PSFStaking: ${RED}Not deployed${NC}"
-    fi
-    
-    if [ ! -z "${CONTRACT_ARGS[DYNAMIC_NFT_ADDRESS]}" ]; then
-        echo -e "PasifikaDynamicNFT: ${GREEN}${CONTRACT_ARGS[DYNAMIC_NFT_ADDRESS]}${NC}"
-    else
-        echo -e "PasifikaDynamicNFT: ${RED}Not deployed${NC}"
-    fi
-    
-    if [ ! -z "${CONTRACT_ARGS[MARKETPLACE_ADDRESS]}" ]; then
-        echo -e "PasifikaMarketplace: ${GREEN}${CONTRACT_ARGS[MARKETPLACE_ADDRESS]}${NC}"
-    else
-        echo -e "PasifikaMarketplace: ${RED}Not deployed${NC}"
-    fi
-    
-    print_success "Deployment process completed!"
-}
-
-show_help() {
-    echo "Pasifika Web3 Tech Hub - Deployment Script"
-    echo "Usage: $0 [OPTIONS]"
-    echo ""
-    echo "Options:"
-    echo "  --help, -h       Show this help message"
-    echo "  --all            Deploy all contracts"
-    echo "  --token          Deploy only PSFToken"
-    echo "  --staking        Deploy only PSFStaking (requires PSFToken)"
-    echo "  --nft            Deploy only PasifikaDynamicNFT"
-    echo "  --marketplace    Deploy only PasifikaMarketplace (requires PSFToken)"
-    echo ""
-    echo "Environment variables (can be set directly in the script):"
-    echo "  RPC_URL          RPC URL for the target network"
-    echo "  VERIFIER_URL     Verifier URL for contract verification"
-    echo "  ACCOUNT_NAME     Foundry account name to use for deployment"
-    echo "  ETHERSCAN_API_KEY LineaScan API key for verification"
-}
-
-# Main execution
-if [ $# -eq 0 ]; then
-    show_help
-    exit 0
+# Load environment variables
+if [ -f .env ]; then
+    source .env
 fi
 
-case "$1" in
-    --help|-h)
-        show_help
-        ;;
-    --all)
-        deploy_all
-        ;;
-    --token)
-        check_dependencies
-        setup_environment
-        build_contracts
-        deploy_psf_token
-        ;;
-    --staking)
-        check_dependencies
-        setup_environment
-        build_contracts
-        read -p "Enter PSFToken address: " psf_token_address
-        CONTRACT_ARGS["PSF_TOKEN_ADDRESS"]=$psf_token_address
-        deploy_psf_staking
-        ;;
-    --nft)
-        check_dependencies
-        setup_environment
-        build_contracts
-        deploy_pasifika_dynamic_nft
-        ;;
-    --marketplace)
-        check_dependencies
-        setup_environment
-        build_contracts
-        read -p "Enter PSFToken address: " psf_token_address
-        CONTRACT_ARGS["PSF_TOKEN_ADDRESS"]=$psf_token_address
-        deploy_pasifika_marketplace
-        ;;
-    *)
-        echo "Unknown option: $1"
-        show_help
-        exit 1
-        ;;
-esac
+# Contract paths
+PSF_TOKEN="src/PSFToken.sol:PSFToken"
+PASIFIKA_DYNAMIC_NFT="src/PasifikaDynamicNFT.sol:PasifikaDynamicNFT"
+PSF_STAKING="src/PSFStaking.sol:PSFStaking"
+PASIFIKA_MARKETPLACE="src/PasifikaMarketplace.sol:PasifikaMarketplace"
+
+# Account name to use (default to pasifika-account)
+ACCOUNT_NAME="${2:-pasifika-account}"
+
+# RPC URL from environment or default
+RPC_URL="${LINEA_SEPOLIA_RPC:-https://rpc.sepolia.linea.build}"
+
+# Check keystore account
+DEPLOYER_ADDRESS=$(cast wallet address --account $ACCOUNT_NAME 2>/dev/null)
+if [ -z "$DEPLOYER_ADDRESS" ]; then
+    echo -e "${RED}Error: Keystore account '$ACCOUNT_NAME' not accessible!${NC}"
+    echo -e "${YELLOW}Available accounts:${NC}"
+    cast wallet list
+    exit 1
+fi
+
+echo -e "${YELLOW}Using account: $ACCOUNT_NAME ($DEPLOYER_ADDRESS)${NC}"
+
+# Skip compilation if already built
+if [ -d "out" ]; then
+    echo -e "\n${BLUE}Using existing build artifacts...${NC}"
+else
+    echo -e "\n${BLUE}Building contracts...${NC}"
+    forge build
+fi
+
+# Contract selection menu if not provided as parameter
+if [ -z "$1" ]; then
+    echo -e "\n${BLUE}Which contract would you like to deploy?${NC}"
+    echo "1) PSFToken"
+    echo "2) PasifikaDynamicNFT"
+    echo "3) PSFStaking"
+    echo "4) PasifikaMarketplace"
+    echo "5) Custom contract path"
+    read -p "Enter your choice (1-5): " contract_choice
+    
+    case $contract_choice in
+        1)
+            CONTRACT=$PSF_TOKEN
+            CONTRACT_NAME="PSFToken"
+            CONSTRUCTOR_ARGS=""
+            ;;
+        2)
+            CONTRACT=$PASIFIKA_DYNAMIC_NFT
+            CONTRACT_NAME="PasifikaDynamicNFT"
+            NFT_NAME="Pasifika Dynamic NFT"
+            NFT_SYMBOL="PNFT"
+            CONSTRUCTOR_ARGS="\"$NFT_NAME\" \"$NFT_SYMBOL\" $DEPLOYER_ADDRESS"
+            ;;
+        3)
+            CONTRACT=$PSF_STAKING
+            CONTRACT_NAME="PSFStaking"
+            echo -e "\n${YELLOW}PSFStaking requires PSFToken address. Please enter it:${NC}"
+            read PSF_TOKEN_ADDRESS
+            
+            if [[ ! "$PSF_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                echo -e "${RED}Invalid PSFToken address format!${NC}"
+                exit 1
+            fi
+            
+            CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $DEPLOYER_ADDRESS $DEPLOYER_ADDRESS"
+            ;;
+        4)
+            CONTRACT=$PASIFIKA_MARKETPLACE
+            CONTRACT_NAME="PasifikaMarketplace"
+            echo -e "\n${YELLOW}PasifikaMarketplace requires PSFToken address. Please enter it:${NC}"
+            read PSF_TOKEN_ADDRESS
+            
+            if [[ ! "$PSF_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                echo -e "${RED}Invalid PSFToken address format!${NC}"
+                exit 1
+            fi
+            
+            FEE_PERCENTAGE="250" # 2.5% fee
+            CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $FEE_PERCENTAGE $DEPLOYER_ADDRESS"
+            ;;
+        5)
+            echo -e "\n${YELLOW}Enter the full contract path (e.g., src/CustomContract.sol:ContractName):${NC}"
+            read custom_contract
+            
+            if [[ ! "$custom_contract" =~ .*":" ]]; then
+                echo -e "${RED}Invalid contract path format! Must be in format path/to/Contract.sol:ContractName${NC}"
+                exit 1
+            fi
+            
+            CONTRACT=$custom_contract
+            CONTRACT_NAME=$(echo "$CONTRACT" | cut -d':' -f2)
+            
+            echo -e "\n${YELLOW}Does this contract require constructor arguments? (y/n)${NC}"
+            read needs_args
+            
+            if [[ "$needs_args" == "y" || "$needs_args" == "Y" ]]; then
+                echo -e "${YELLOW}Enter constructor arguments separated by spaces:${NC}"
+                read custom_args
+                CONSTRUCTOR_ARGS=$custom_args
+            else
+                CONSTRUCTOR_ARGS=""
+            fi
+            ;;
+        *)
+            echo -e "${RED}Invalid choice!${NC}"
+            exit 1
+            ;;
+    esac
+else
+    # Contract provided as parameter
+    CONTRACT=$1
+    CONTRACT_NAME=$(echo "$CONTRACT" | cut -d':' -f2)
+    
+    # Set constructor args based on contract type
+    if [[ "$CONTRACT_NAME" == "PSFToken" ]]; then
+        CONSTRUCTOR_ARGS=""
+    elif [[ "$CONTRACT_NAME" == "PasifikaDynamicNFT" ]]; then
+        NFT_NAME="Pasifika Dynamic NFT"
+        NFT_SYMBOL="PNFT"
+        CONSTRUCTOR_ARGS="\"$NFT_NAME\" \"$NFT_SYMBOL\" $DEPLOYER_ADDRESS"
+    elif [[ "$CONTRACT_NAME" == "PSFStaking" || "$CONTRACT_NAME" == "PasifikaMarketplace" ]]; then
+        echo -e "\n${YELLOW}${CONTRACT_NAME} requires PSFToken address. Please enter it:${NC}"
+        read PSF_TOKEN_ADDRESS
+        
+        if [[ ! "$PSF_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid PSFToken address format!${NC}"
+            exit 1
+        fi
+        
+        if [[ "$CONTRACT_NAME" == "PSFStaking" ]]; then
+            CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $DEPLOYER_ADDRESS $DEPLOYER_ADDRESS"
+        else
+            FEE_PERCENTAGE="250" # 2.5% fee
+            CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $FEE_PERCENTAGE $DEPLOYER_ADDRESS"
+        fi
+    else
+        echo -e "${YELLOW}Using default constructor for $CONTRACT_NAME${NC}"
+        CONSTRUCTOR_ARGS=""
+    fi
+fi
+
+# Display deployment info
+echo -e "\n${BLUE}Deploying $CONTRACT_NAME to Linea Sepolia...${NC}"
+
+# Deploy the contract
+echo -e "\n${YELLOW}You will be prompted for your keystore password...${NC}"
+
+# Construct deployment command with optimized gas settings
+DEPLOY_CMD="forge create --rpc-url $RPC_URL --account $ACCOUNT_NAME --broadcast $CONTRACT --legacy --gas-limit 2000000 --gas-price 100000000"
+
+# Add constructor args if needed
+if [ ! -z "$CONSTRUCTOR_ARGS" ]; then
+    DEPLOY_CMD="$DEPLOY_CMD --constructor-args $CONSTRUCTOR_ARGS"
+fi
+
+# Add verification if API key available
+if [ ! -z "$LINEASCAN_API_KEY" ]; then
+    DEPLOY_CMD="$DEPLOY_CMD --verify --verifier-url https://api-sepolia.lineascan.build/api --etherscan-api-key $LINEASCAN_API_KEY"
+fi
+
+# Display command (hiding any private keys)
+echo -e "${YELLOW}Executing deployment for $CONTRACT_NAME...${NC}"
+
+# Execute deployment
+DEPLOY_OUTPUT=$(eval $DEPLOY_CMD)
+DEPLOY_RESULT=$?
+
+# Extract the deployed contract address
+if [ $DEPLOY_RESULT -eq 0 ]; then
+    # Extract the contract address from the output
+    CONTRACT_ADDRESS=$(echo "$DEPLOY_OUTPUT" | grep -oP "Deployed to: \K0x[a-fA-F0-9]{40}")
+    TRANSACTION_HASH=$(echo "$DEPLOY_OUTPUT" | grep -oP "Transaction hash: \K0x[a-fA-F0-9]{64}")
+    
+    # Fall back to alternative extraction if the above didn't work
+    if [ -z "$CONTRACT_ADDRESS" ]; then
+        CONTRACT_ADDRESS=$(echo "$DEPLOY_OUTPUT" | grep -o "0x[a-fA-F0-9]\{40\}" | head -1)
+    fi
+    
+    if [ -z "$TRANSACTION_HASH" ]; then
+        TRANSACTION_HASH=$(echo "$DEPLOY_OUTPUT" | grep -o "0x[a-fA-F0-9]\{64\}" | head -1)
+    fi
+    
+    echo -e "\n${GREEN}Deployment successful!${NC}"
+    echo -e "${GREEN}Contract: $CONTRACT_NAME${NC}"
+    echo -e "${GREEN}Address: $CONTRACT_ADDRESS${NC}"
+    echo -e "${GREEN}TX Hash: $TRANSACTION_HASH${NC}"
+    
+    # Create deployment directory if it doesn't exist
+    FRONTEND_DIR="/home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-fe/deployed_contracts"
+    mkdir -p "$FRONTEND_DIR"
+    
+    # Save the contract info to a single reference file
+    REFERENCE_FILE="$FRONTEND_DIR/${CONTRACT_NAME}.json"
+    
+    # Create JSON with deployment details
+    cat > "$REFERENCE_FILE" << EOF
+{
+  "contractName": "$CONTRACT_NAME",
+  "address": "$CONTRACT_ADDRESS",
+  "network": "linea-sepolia",
+  "deploymentDate": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "transactionHash": "$TRANSACTION_HASH",
+  "deployer": "$DEPLOYER_ADDRESS"
+}
+EOF
+    
+    echo -e "${GREEN}Deployment details saved to: $REFERENCE_FILE${NC}"
+    
+    # If this is the PSFToken, save it as the main token address for reference
+    if [[ "$CONTRACT_NAME" == "PSFToken" ]]; then
+        echo "$CONTRACT_ADDRESS" > "$FRONTEND_DIR/psf_token_address.txt"
+        echo -e "${GREEN}Token address saved to psf_token_address.txt${NC}"
+    fi
+    
+    # Print Linea Sepolia explorer link
+    echo -e "\n${BLUE}View your contract on Linea Sepolia Explorer:${NC}"
+    echo -e "${YELLOW}https://sepolia.lineascan.build/address/$CONTRACT_ADDRESS${NC}"
+else
+    echo -e "\n${RED}Deployment failed!${NC}"
+    echo "$DEPLOY_OUTPUT"
+    echo -e "${YELLOW}Check the error details above${NC}"
+    echo -e "${YELLOW}Make sure you have sufficient Linea Sepolia testnet ETH${NC}"
+    echo -e "${YELLOW}Visit a Linea Sepolia faucet to get testnet ETH${NC}"
+    exit 1
+fi
