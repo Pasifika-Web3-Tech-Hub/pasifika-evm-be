@@ -3,6 +3,13 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc-version = "0.8.20"
+via_ir = true
+optimizer = true
+optimizer_runs = 200
+remappings = [
+    "@openzeppelin/contracts=lib/openzeppelin-contracts/contracts",
+    "@openzeppelin/contracts-upgradeable=lib/openzeppelin-contracts-upgradeable/contracts"
+]
 
 [profile.rpc-ndpoints]
 sepolia = "https://rpc.sepolia.linea.build"

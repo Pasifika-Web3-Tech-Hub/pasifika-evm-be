@@ -13,7 +13,7 @@ import "forge-std/console.sol";
  * @dev Implementation of the PASIFIKA Token (PSF)
  * This token implements governance extensions, vesting schedules, and staking
  */
-contract PSFToken is ERC20, ERC20Permit, ERC20Votes, AccessControl, Pausable {
+contract PSFToken is ERC20Votes, AccessControl, Pausable {
     // Constants
     uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10**18; // 1 billion tokens
     
@@ -61,7 +61,7 @@ contract PSFToken is ERC20, ERC20Permit, ERC20Votes, AccessControl, Pausable {
      */
     constructor()
         ERC20("PASIFIKA Token", "PSF")
-        ERC20Permit("PASIFIKA Token")
+        EIP712("PASIFIKA Token", "1")
     {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(ADMIN_ROLE, msg.sender);
@@ -348,20 +348,24 @@ contract PSFToken is ERC20, ERC20Permit, ERC20Votes, AccessControl, Pausable {
     }
     
     /**
-     * @dev OpenZeppelin 5.x+ override for transfer logic
+     * @dev Override for the ERC20 token transfer logic - required for Votes & Pausable
+     * In OpenZeppelin v5.x, this needs to override the correct base contracts
      */
     function _update(address from, address to, uint256 value)
         internal
-        override(ERC20, ERC20Votes)
+        override(ERC20Votes)
+        whenNotPaused
     {
-        _requireNotPaused(); 
         super._update(from, to, value);
     }
 
+    /**
+     * @dev Override for the nonces function - required for ERC20Permit
+     */
     function nonces(address owner)
         public
         view
-        override(ERC20Permit, Nonces)
+        override
         returns (uint256)
     {
         return super.nonces(owner);
