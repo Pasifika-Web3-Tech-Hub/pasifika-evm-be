@@ -55,6 +55,14 @@ The smart contract system is built using Solidity and Foundry development toolki
   - Fee management system
   - Admin controls
 
+- **PasifikaDAO Contract**: Governance system with:
+  - Full compatibility with OpenZeppelin v5.3.0
+  - Time-locked proposal execution
+  - Role-based access control with admin and moderator roles
+  - Quorum-based voting
+  - Configurable voting delay, voting period, and proposal threshold
+  - Parameter adjustment functions for governance fine-tuning
+
 ### Planned Future Components
 
 Additional components from the smart contracts documentation are planned for future implementation:
@@ -67,6 +75,38 @@ Additional components from the smart contracts documentation are planned for fut
 - API Layer
 - Database Layer
 - Infrastructure components
+
+## Smart Contracts Overview
+
+The Pasifika Web3 Tech Hub backend consists of the following smart contracts:
+
+### Core Contracts
+
+- **PSFToken**: ERC20 token with governance capabilities, the native token of the Pasifika ecosystem.
+  
+- **MockToken**: Simplified token implementation for testing governance functionality.
+
+- **PasifikaDAO**: Governance contract that allows token holders to propose, vote, and execute proposals through a timelock mechanism.
+
+- **PSFStaking**: Advanced staking mechanism with tiers, duration-based rewards, and governance weight calculation.
+
+### NFT Contracts
+
+- **PasifikaDynamicNFT**: Dynamic NFT implementation with on-chain state changes, cultural context verification, and usage permissions.
+  
+- **DigitalContentNFT**: Specialized NFT for digital content with access controls, usage rights, and cultural context preservation.
+  
+- **PhysicalItemNFT**: NFTs representing physical items with quality metrics, supply chain tracking, and authenticity verification.
+
+### Marketplace Contracts
+
+- **PasifikaMarketplace**: Marketplace for trading NFTs with fixed price and auction listings, escrow functionality, and dispute resolution.
+  
+- **FeeManager**: Manages, calculates, and distributes marketplace fees to various stakeholders including creators, community fund, and platform treasury.
+
+### Governance & Coordination
+
+- **WorkingGroups**: Manages working groups and validators, with staking, reputation, and certification functionality for ecosystem governance.
 
 ## Smart Contract Architecture
 
@@ -85,6 +125,7 @@ This project uses **OpenZeppelin Contracts v5.3.0** for implementing secure, sta
 - Token Standards (`ERC20.sol`, `ERC721.sol`)
 - Token Extensions (`ERC20Votes.sol`, `ERC721URIStorage.sol`) 
 - Security Utilities (`Pausable.sol`, `ReentrancyGuard.sol`)
+- Governance (`Governor.sol`, `GovernorTimelockControl.sol`, `GovernorSettings.sol`, etc.)
 
 **Best Practices for OpenZeppelin Integration:**
 1. **Version Consistency**: Always maintain consistent versions across all OpenZeppelin dependencies
@@ -155,6 +196,26 @@ NFT marketplace contract that enables buying, selling, and auctioning NFTs.
 - Escrow management
 - Auction timing and finalization
 
+#### PasifikaDAO.sol
+
+Governance contract that enables token holders to propose, vote on, and execute proposals.
+
+**Key Features:**
+- Full compatibility with OpenZeppelin v5.3.0 Governor contracts
+- Time-locked proposal execution through GovernorTimelockControl
+- Configurable voting parameters through GovernorSettings
+- Token-based voting power through GovernorVotes
+- Quorum-based decision making through GovernorVotesQuorumFraction
+- Role-based access control for administrative functions
+
+**Contract Components:**
+- Role definitions (ADMIN_ROLE, MODERATOR_ROLE)
+- Voting delay, voting period, and proposal threshold settings
+- Quorum percentage configuration
+- Proposal lifecycle management (propose, vote, queue, execute)
+- Administrative functions for parameter adjustments
+- Override implementations for OpenZeppelin v5.3.0 compatibility
+
 ## Process Flow Diagram
 
 ```mermaid
@@ -172,9 +233,16 @@ graph TD
     G --> J[Reward Distribution]
     G --> K[Governance Weight]
     
+    A --> P[PasifikaDAO Contract]
+    P --> Q[Proposal Creation]
+    P --> R[Voting]
+    P --> S[Proposal Execution]
+    P --> T[Parameter Configuration]
+    
     L[Admin] --> M[Role Management]
     M --> B
     M --> G
+    M --> P
     
     N[Treasury] --> O[Token Distribution]
     O --> B
@@ -192,7 +260,26 @@ graph TD
         J
         K
         M
+        P
+        Q
+        R
+        S
+        T
     end
+```
+
+## Deployment
+
+Each contract has a corresponding deployment script in the `script` folder using Foundry's script system. The main deployment script is available at `deploy/deploy.sh` which provides an interactive deployment process.
+
+For PasifikaDAO and other contracts requiring complex setup:
+
+```shell
+# Deploy PasifikaDAO with its TimelockController
+$ forge script script/PasifikaDAO.s.sol --rpc-url <your_rpc_url> --broadcast
+
+# Deploy other contracts via the unified deployment script
+$ ./deploy/deploy.sh
 ```
 
 ## Development Tools
@@ -211,6 +298,27 @@ Foundry consists of:
 ### Documentation
 
 https://book.getfoundry.sh/
+
+## Recent Updates
+
+### OpenZeppelin v5.3.0 Compatibility
+
+The smart contract system has been updated to ensure full compatibility with OpenZeppelin v5.3.0:
+
+- **PasifikaDAO**:
+  - Implemented correct inheritance pattern with Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorVotesQuorumFraction, and GovernorTimelockControl
+  - Added proper function overrides for all inherited methods
+  - Implemented required new methods: `_queueOperations`, `_executeOperations`, and `proposalNeedsQueuing`
+  - Updated function calls to use specific parent implementation references
+  - Added role-based access control for administrative functions
+  
+- **MockToken**:
+  - Updated to properly inherit from ERC20, ERC20Permit, and ERC20Votes
+  - Implemented proper override patterns for `_update` and `nonces` functions
+  - Added MINTER_ROLE for token minting capabilities
+  - Fixed constructor parameter passing to match OpenZeppelin v5.3.0 requirements
+
+All contracts have been verified for compatibility with OpenZeppelin v5.3.0 and compile successfully.
 
 ## Usage
 
