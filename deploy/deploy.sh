@@ -58,19 +58,29 @@ fi
 # Contract selection menu if not provided as parameter
 if [ -z "$1" ]; then
     echo -e "\n${BLUE}Which contract would you like to deploy?${NC}"
-    echo "1) PSFToken"
-    echo "2) PasifikaDynamicNFT"
-    echo "3) PSFStaking"
-    echo "4) PasifikaMarketplace"
-    echo "5) MockToken"
-    echo "6) PasifikaDAO"
-    echo "7) FeeManager"
-    echo "8) DigitalContentNFT"
-    echo "9) PhysicalItemNFT"
-    echo "10) WorkingGroups"
-    echo "11) PasifikaTreasury"
-    echo "12) Custom contract path"
-    read -p "Enter your choice (1-12): " contract_choice
+    
+    echo -e "\n${YELLOW}=== Deployment Order ===${NC}"
+    echo "1) PSFToken.sol"
+    echo "2) PSFStaking.sol"
+    echo "3) PasifikaTreasury.sol"
+    echo "4) PasifikaOracle.sol (Not Implemented Yet)"
+    echo "5) CulturalRegistry.sol (Not Implemented Yet)"
+    echo "6) RoyaltyDistribution.sol (Not Implemented Yet)"
+    echo "7) PasifikaDynamicNFT.sol (Base Contract)"
+    echo "8) PhysicalItemNFT.sol"
+    echo "9) DigitalContentNFT.sol"
+    echo "10) ValidatorRegistry.sol (Not Implemented Yet)"
+    echo "11) NodeRegistry.sol (Not Implemented Yet)"
+    echo "12) PasifikaMarketplace.sol"
+    echo "13) FeeManager.sol"
+    echo "14) PasifikaDAO.sol"
+    echo "15) WorkingGroups.sol"
+    echo "16) DisputeResolution.sol (Not Implemented Yet)"
+    echo "17) AgentCoordination.sol (Not Implemented Yet)"
+    echo "18) MockToken.sol (For Testing)"
+    echo "19) Custom contract path"
+    
+    read -p "Enter your choice (1-19): " contract_choice
     
     case $contract_choice in
         1)
@@ -79,13 +89,6 @@ if [ -z "$1" ]; then
             CONSTRUCTOR_ARGS=""
             ;;
         2)
-            CONTRACT=$PASIFIKA_DYNAMIC_NFT
-            CONTRACT_NAME="PasifikaDynamicNFT"
-            NFT_NAME="Pasifika Dynamic NFT"
-            NFT_SYMBOL="PNFT"
-            CONSTRUCTOR_ARGS="\"$NFT_NAME\" \"$NFT_SYMBOL\" $DEPLOYER_ADDRESS"
-            ;;
-        3)
             CONTRACT=$PSF_STAKING
             CONTRACT_NAME="PSFStaking"
             echo -e "\n${YELLOW}PSFStaking requires PSFToken address. Please enter it:${NC}"
@@ -98,7 +101,50 @@ if [ -z "$1" ]; then
             
             CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $DEPLOYER_ADDRESS $DEPLOYER_ADDRESS"
             ;;
-        4)
+        3)
+            CONTRACT=$PASIFIKA_TREASURY
+            CONTRACT_NAME="PasifikaTreasury"
+            echo -e "\n${YELLOW}PasifikaTreasury requires PSF token address and treasury wallet address${NC}"
+            echo -e "\n${YELLOW}Enter the PSF token address:${NC}"
+            read PSF_TOKEN_ADDRESS
+            
+            if [[ ! "$PSF_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                echo -e "${RED}Invalid PSF token address format!${NC}"
+                exit 1
+            fi
+            
+            echo -e "\n${YELLOW}Enter the treasury wallet address:${NC}"
+            read TREASURY_WALLET_ADDRESS
+            
+            if [[ ! "$TREASURY_WALLET_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                echo -e "${RED}Invalid treasury wallet address format!${NC}"
+                exit 1
+            fi
+            
+            CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $TREASURY_WALLET_ADDRESS"
+            ;;
+        4|5|6|10|11|16|17)
+            echo -e "${RED}This contract is not implemented yet in the POC version.${NC}"
+            exit 1
+            ;;
+        7)
+            CONTRACT=$PASIFIKA_DYNAMIC_NFT
+            CONTRACT_NAME="PasifikaDynamicNFT"
+            NFT_NAME="Pasifika Dynamic NFT"
+            NFT_SYMBOL="PNFT"
+            CONSTRUCTOR_ARGS="\"$NFT_NAME\" \"$NFT_SYMBOL\" $DEPLOYER_ADDRESS"
+            ;;
+        8)
+            CONTRACT=$PHYSICAL_ITEM_NFT
+            CONTRACT_NAME="PhysicalItemNFT"
+            CONSTRUCTOR_ARGS=""
+            ;;
+        9)
+            CONTRACT=$DIGITAL_CONTENT_NFT
+            CONTRACT_NAME="DigitalContentNFT"
+            CONSTRUCTOR_ARGS=""
+            ;;
+        12)
             CONTRACT=$PASIFIKA_MARKETPLACE
             CONTRACT_NAME="PasifikaMarketplace"
             echo -e "\n${YELLOW}PasifikaMarketplace requires PSFToken address. Please enter it:${NC}"
@@ -112,52 +158,7 @@ if [ -z "$1" ]; then
             FEE_PERCENTAGE="250" # 2.5% fee
             CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $FEE_PERCENTAGE $DEPLOYER_ADDRESS"
             ;;
-        5)
-            CONTRACT=$MOCK_TOKEN
-            CONTRACT_NAME="MockToken"
-            echo -e "\n${YELLOW}Enter a name for the token (e.g., Pasifika Test Token):${NC}"
-            read TOKEN_NAME
-            echo -e "\n${YELLOW}Enter a symbol for the token (e.g., TPSF):${NC}"
-            read TOKEN_SYMBOL
-            
-            CONSTRUCTOR_ARGS="\"$TOKEN_NAME\" \"$TOKEN_SYMBOL\""
-            ;;
-        6)
-            CONTRACT=$PASIFIKA_DAO
-            CONTRACT_NAME="PasifikaDAO"
-            echo -e "\n${YELLOW}PasifikaDAO requires token address, TimelockController, and other parameters${NC}"
-            echo -e "\n${YELLOW}Enter the token (usually PSFToken) address:${NC}"
-            read TOKEN_ADDRESS
-            
-            if [[ ! "$TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
-                echo -e "${RED}Invalid token address format!${NC}"
-                exit 1
-            fi
-            
-            echo -e "\n${YELLOW}Enter the timelock controller address (or leave empty to deploy a new one):${NC}"
-            read TIMELOCK_ADDRESS
-            
-            if [ -z "$TIMELOCK_ADDRESS" ]; then
-                echo -e "\n${YELLOW}Will create a new TimelockController as part of the script${NC}"
-                echo -e "\n${YELLOW}Use the PasifikaDAO.s.sol script instead for a complete deployment${NC}"
-                echo -e "\n${RED}Aborting direct deployment. Please use 'forge script script/PasifikaDAO.s.sol'${NC}"
-                exit 1
-            fi
-            
-            if [[ ! "$TIMELOCK_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
-                echo -e "${RED}Invalid timelock address format!${NC}"
-                exit 1
-            fi
-            
-            # Default governance parameters
-            VOTING_DELAY="1"                  # 1 block
-            VOTING_PERIOD="50400"             # ~1 week (assuming 12 sec blocks)
-            PROPOSAL_THRESHOLD="100000000000000000000" # 100 tokens (with 18 decimals)
-            QUORUM_PERCENTAGE="4"             # 4%
-            
-            CONSTRUCTOR_ARGS="\"Pasifika DAO\" $TOKEN_ADDRESS $TIMELOCK_ADDRESS $VOTING_DELAY $VOTING_PERIOD $PROPOSAL_THRESHOLD $QUORUM_PERCENTAGE"
-            ;;
-        7)
+        13)
             CONTRACT=$FEE_MANAGER
             CONTRACT_NAME="FeeManager"
             echo -e "\n${YELLOW}FeeManager requires treasury and community fund addresses${NC}"
@@ -179,21 +180,39 @@ if [ -z "$1" ]; then
             
             CONSTRUCTOR_ARGS="$TREASURY_ADDRESS $COMMUNITY_FUND_ADDRESS"
             ;;
-        8)
-            CONTRACT=$DIGITAL_CONTENT_NFT
-            CONTRACT_NAME="DigitalContentNFT"
-            CONSTRUCTOR_ARGS=""
+        14)
+            CONTRACT=$PASIFIKA_DAO
+            CONTRACT_NAME="PasifikaDAO"
+            echo -e "\n${YELLOW}PasifikaDAO requires token address, TimelockController, and other parameters${NC}"
+            echo -e "\n${YELLOW}Enter the token address:${NC}"
+            read TOKEN_ADDRESS
+            
+            if [[ ! "$TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                echo -e "${RED}Invalid token address format!${NC}"
+                exit 1
+            fi
+            
+            echo -e "\n${YELLOW}Enter the timelock controller address:${NC}"
+            read TIMELOCK_ADDRESS
+            
+            if [[ ! "$TIMELOCK_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                echo -e "${RED}Invalid timelock address format!${NC}"
+                exit 1
+            fi
+            
+            # Default governance parameters
+            VOTING_DELAY="1"                  # 1 block
+            VOTING_PERIOD="50400"             # ~1 week (assuming 12 sec blocks)
+            PROPOSAL_THRESHOLD="100000000000000000000" # 100 tokens (with 18 decimals)
+            QUORUM_PERCENTAGE="4"             # 4%
+            
+            CONSTRUCTOR_ARGS="\"Pasifika DAO\" $TOKEN_ADDRESS $TIMELOCK_ADDRESS $VOTING_DELAY $VOTING_PERIOD $PROPOSAL_THRESHOLD $QUORUM_PERCENTAGE"
             ;;
-        9)
-            CONTRACT=$PHYSICAL_ITEM_NFT
-            CONTRACT_NAME="PhysicalItemNFT"
-            CONSTRUCTOR_ARGS=""
-            ;;
-        10)
+        15)
             CONTRACT=$WORKING_GROUPS
             CONTRACT_NAME="WorkingGroups"
             echo -e "\n${YELLOW}WorkingGroups requires a staking token address${NC}"
-            echo -e "\n${YELLOW}Enter the staking token (usually PSFToken) address:${NC}"
+            echo -e "\n${YELLOW}Enter the staking token address:${NC}"
             read STAKING_TOKEN_ADDRESS
             
             if [[ ! "$STAKING_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
@@ -203,29 +222,17 @@ if [ -z "$1" ]; then
             
             CONSTRUCTOR_ARGS="$STAKING_TOKEN_ADDRESS"
             ;;
-        11)
-            CONTRACT=$PASIFIKA_TREASURY
-            CONTRACT_NAME="PasifikaTreasury"
-            echo -e "\n${YELLOW}PasifikaTreasury requires treasury and community fund addresses${NC}"
-            echo -e "\n${YELLOW}Enter the treasury address:${NC}"
-            read TREASURY_ADDRESS
+        18)
+            CONTRACT=$MOCK_TOKEN
+            CONTRACT_NAME="MockToken"
+            echo -e "\n${YELLOW}Enter a name for the token (e.g., Pasifika Test Token):${NC}"
+            read TOKEN_NAME
+            echo -e "\n${YELLOW}Enter a symbol for the token (e.g., TPSF):${NC}"
+            read TOKEN_SYMBOL
             
-            if [[ ! "$TREASURY_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
-                echo -e "${RED}Invalid treasury address format!${NC}"
-                exit 1
-            fi
-            
-            echo -e "\n${YELLOW}Enter the community fund address:${NC}"
-            read COMMUNITY_FUND_ADDRESS
-            
-            if [[ ! "$COMMUNITY_FUND_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
-                echo -e "${RED}Invalid community fund address format!${NC}"
-                exit 1
-            fi
-            
-            CONSTRUCTOR_ARGS="$TREASURY_ADDRESS $COMMUNITY_FUND_ADDRESS"
+            CONSTRUCTOR_ARGS="\"$TOKEN_NAME\" \"$TOKEN_SYMBOL\""
             ;;
-        12)
+        19)
             echo -e "\n${YELLOW}Enter the full contract path (e.g., src/CustomContract.sol:ContractName):${NC}"
             read custom_contract
             
@@ -261,25 +268,6 @@ else
     # Set constructor args based on contract type
     if [[ "$CONTRACT_NAME" == "PSFToken" ]]; then
         CONSTRUCTOR_ARGS=""
-    elif [[ "$CONTRACT_NAME" == "PasifikaDynamicNFT" ]]; then
-        NFT_NAME="Pasifika Dynamic NFT"
-        NFT_SYMBOL="PNFT"
-        CONSTRUCTOR_ARGS="\"$NFT_NAME\" \"$NFT_SYMBOL\" $DEPLOYER_ADDRESS"
-    elif [[ "$CONTRACT_NAME" == "PSFStaking" || "$CONTRACT_NAME" == "PasifikaMarketplace" ]]; then
-        echo -e "\n${YELLOW}${CONTRACT_NAME} requires PSFToken address. Please enter it:${NC}"
-        read PSF_TOKEN_ADDRESS
-        
-        if [[ ! "$PSF_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
-            echo -e "${RED}Invalid PSFToken address format!${NC}"
-            exit 1
-        fi
-        
-        if [[ "$CONTRACT_NAME" == "PSFStaking" ]]; then
-            CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $DEPLOYER_ADDRESS $DEPLOYER_ADDRESS"
-        else
-            FEE_PERCENTAGE="250" # 2.5% fee
-            CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $FEE_PERCENTAGE $DEPLOYER_ADDRESS"
-        fi
     elif [[ "$CONTRACT_NAME" == "MockToken" ]]; then
         echo -e "\n${YELLOW}Enter a name for the token (e.g., Pasifika Test Token):${NC}"
         read TOKEN_NAME
@@ -288,8 +276,76 @@ else
         
         CONSTRUCTOR_ARGS="\"$TOKEN_NAME\" \"$TOKEN_SYMBOL\""
     elif [[ "$CONTRACT_NAME" == "PasifikaDAO" ]]; then
-        echo -e "\n${RED}PasifikaDAO requires a complex setup. Please use the selection menu or run the script directly.${NC}"
-        exit 1
+        echo -e "\n${YELLOW}PasifikaDAO requires token address, TimelockController, and other parameters${NC}"
+        echo -e "\n${YELLOW}Enter the token address:${NC}"
+        read TOKEN_ADDRESS
+        
+        if [[ ! "$TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid token address format!${NC}"
+            exit 1
+        fi
+        
+        echo -e "\n${YELLOW}Enter the timelock controller address:${NC}"
+        read TIMELOCK_ADDRESS
+        
+        if [[ ! "$TIMELOCK_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid timelock address format!${NC}"
+            exit 1
+        fi
+        
+        # Default governance parameters
+        VOTING_DELAY="1"                  # 1 block
+        VOTING_PERIOD="50400"             # ~1 week (assuming 12 sec blocks)
+        PROPOSAL_THRESHOLD="100000000000000000000" # 100 tokens (with 18 decimals)
+        QUORUM_PERCENTAGE="4"             # 4%
+        
+        CONSTRUCTOR_ARGS="\"Pasifika DAO\" $TOKEN_ADDRESS $TIMELOCK_ADDRESS $VOTING_DELAY $VOTING_PERIOD $PROPOSAL_THRESHOLD $QUORUM_PERCENTAGE"
+    elif [[ "$CONTRACT_NAME" == "PSFStaking" ]]; then
+        echo -e "\n${YELLOW}PSFStaking requires PSFToken address. Please enter it:${NC}"
+        read PSF_TOKEN_ADDRESS
+        
+        if [[ ! "$PSF_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid PSFToken address format!${NC}"
+            exit 1
+        fi
+        
+        CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $DEPLOYER_ADDRESS $DEPLOYER_ADDRESS"
+    elif [[ "$CONTRACT_NAME" == "PasifikaTreasury" ]]; then
+        echo -e "\n${YELLOW}PasifikaTreasury requires PSF token address and treasury wallet address${NC}"
+        echo -e "\n${YELLOW}Enter the PSF token address:${NC}"
+        read PSF_TOKEN_ADDRESS
+        
+        if [[ ! "$PSF_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid PSF token address format!${NC}"
+            exit 1
+        fi
+        
+        echo -e "\n${YELLOW}Enter the treasury wallet address:${NC}"
+        read TREASURY_WALLET_ADDRESS
+        
+        if [[ ! "$TREASURY_WALLET_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid treasury wallet address format!${NC}"
+            exit 1
+        fi
+        
+        CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $TREASURY_WALLET_ADDRESS"
+    elif [[ "$CONTRACT_NAME" == "PasifikaDynamicNFT" ]]; then
+        NFT_NAME="Pasifika Dynamic NFT"
+        NFT_SYMBOL="PNFT"
+        CONSTRUCTOR_ARGS="\"$NFT_NAME\" \"$NFT_SYMBOL\" $DEPLOYER_ADDRESS"
+    elif [[ "$CONTRACT_NAME" == "DigitalContentNFT" || "$CONTRACT_NAME" == "PhysicalItemNFT" ]]; then
+        CONSTRUCTOR_ARGS=""
+    elif [[ "$CONTRACT_NAME" == "PasifikaMarketplace" ]]; then
+        echo -e "\n${YELLOW}PasifikaMarketplace requires PSFToken address. Please enter it:${NC}"
+        read PSF_TOKEN_ADDRESS
+        
+        if [[ ! "$PSF_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid PSFToken address format!${NC}"
+            exit 1
+        fi
+        
+        FEE_PERCENTAGE="250" # 2.5% fee
+        CONSTRUCTOR_ARGS="$PSF_TOKEN_ADDRESS $FEE_PERCENTAGE $DEPLOYER_ADDRESS"
     elif [[ "$CONTRACT_NAME" == "FeeManager" ]]; then
         echo -e "\n${YELLOW}FeeManager requires treasury and community fund addresses${NC}"
         echo -e "\n${YELLOW}Enter the treasury address:${NC}"
@@ -309,30 +365,9 @@ else
         fi
         
         CONSTRUCTOR_ARGS="$TREASURY_ADDRESS $COMMUNITY_FUND_ADDRESS"
-    elif [[ "$CONTRACT_NAME" == "PasifikaTreasury" ]]; then
-        echo -e "\n${YELLOW}PasifikaTreasury requires treasury and community fund addresses${NC}"
-        echo -e "\n${YELLOW}Enter the treasury address:${NC}"
-        read TREASURY_ADDRESS
-        
-        if [[ ! "$TREASURY_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
-            echo -e "${RED}Invalid treasury address format!${NC}"
-            exit 1
-        fi
-        
-        echo -e "\n${YELLOW}Enter the community fund address:${NC}"
-        read COMMUNITY_FUND_ADDRESS
-        
-        if [[ ! "$COMMUNITY_FUND_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
-            echo -e "${RED}Invalid community fund address format!${NC}"
-            exit 1
-        fi
-        
-        CONSTRUCTOR_ARGS="$TREASURY_ADDRESS $COMMUNITY_FUND_ADDRESS"
-    elif [[ "$CONTRACT_NAME" == "DigitalContentNFT" || "$CONTRACT_NAME" == "PhysicalItemNFT" ]]; then
-        CONSTRUCTOR_ARGS=""
     elif [[ "$CONTRACT_NAME" == "WorkingGroups" ]]; then
         echo -e "\n${YELLOW}WorkingGroups requires a staking token address${NC}"
-        echo -e "\n${YELLOW}Enter the staking token (usually PSFToken) address:${NC}"
+        echo -e "\n${YELLOW}Enter the staking token address:${NC}"
         read STAKING_TOKEN_ADDRESS
         
         if [[ ! "$STAKING_TOKEN_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
