@@ -63,22 +63,30 @@ The smart contract system is built using Solidity and Foundry development toolki
   - Configurable voting delay, voting period, and proposal threshold
   - Parameter adjustment functions for governance fine-tuning
 
-### Planned Future Components
+## Project Status: Proof of Concept (POC)
 
-Additional components from the smart contracts documentation are planned for future implementation:
+This repository currently contains 8 out of the 16 planned smart contracts for the full Pasifika Web3 Tech Hub ecosystem. This represents our Proof of Concept (POC) implementation, which demonstrates core functionalities and integration patterns. 
 
-- Advanced Governance System
-- Oracle Integration
-- Cultural Protection System Enhancements
-- Treasury Management
-- AI Agent Coordination
-- API Layer
-- Database Layer
-- Infrastructure components
+The remaining 8 contracts will be developed before the production release, which will complete the full suite of planned functionalities as outlined in the project documentation.
+
+### 8 Remaining Contracts for Production Release
+
+The following contracts are planned for implementation before the production release:
+
+1. **PasifikaOracle**: Oracle system for fetching and verifying off-chain data.
+2. **CulturalRegistry**: Registry for cultural artifacts, traditions, and intellectual property.
+3. **RoyaltyDistribution**: System for distributing royalties to creators and communities.
+4. **ValidatorRegistry**: Registry and management system for network validators.
+5. **NodeRegistry**: Registry and management system for infrastructure node operators.
+6. **WorkingGroups**: Coordination system for specialized working groups within the ecosystem.
+7. **DisputeResolution**: System for resolving disputes in the marketplace and ecosystem.
+8. **AgentCoordination**: Framework for coordinating AI agent interactions and rewards.
+
+These contracts will complete the full technical architecture outlined in the project documentation.
 
 ## Smart Contracts Overview
 
-The Pasifika Web3 Tech Hub backend consists of the following smart contracts:
+The Pasifika Web3 Tech Hub backend currently includes the following smart contracts:
 
 ### Core Contracts
 
@@ -89,6 +97,13 @@ The Pasifika Web3 Tech Hub backend consists of the following smart contracts:
 - **PasifikaDAO**: Governance contract that allows token holders to propose, vote, and execute proposals through a timelock mechanism.
 
 - **PSFStaking**: Advanced staking mechanism with tiers, duration-based rewards, and governance weight calculation.
+
+- **PasifikaTreasury**: Treasury management contract with:
+  - Multi-signature control for fund management
+  - Budget allocation system with categories
+  - Spending proposal and approval workflow
+  - Fund distribution with proper authorization checks
+  - Emergency recovery mechanisms
 
 ### NFT Contracts
 
@@ -216,10 +231,29 @@ Governance contract that enables token holders to propose, vote on, and execute 
 - Administrative functions for parameter adjustments
 - Override implementations for OpenZeppelin v5.3.0 compatibility
 
+#### PasifikaTreasury.sol
+
+Treasury management contract with multi-signature control for fund management.
+
+**Key Features:**
+- Multi-signature control for fund management
+- Budget allocation system with categories
+- Spending proposal and approval workflow
+- Fund distribution with proper authorization checks
+- Emergency recovery mechanisms
+
+**Contract Components:**
+- Role definitions (ADMIN, TREASURY_MANAGER)
+- Budget category management
+- Spending proposal and approval workflow
+- Fund distribution with authorization checks
+- Emergency recovery mechanisms
+
 ## Process Flow Diagram
 
 ```mermaid
 graph TD
+    %% Current Implemented Contracts - Solid Lines
     A[User] --> B[PSFToken Contract]
     B --> C[Token Transfers]
     B --> D[Governance Voting]
@@ -239,15 +273,66 @@ graph TD
     P --> S[Proposal Execution]
     P --> T[Parameter Configuration]
     
+    A --> U[PasifikaTreasury Contract]
+    U --> V[Budget Allocation]
+    U --> W[Spending Proposals]
+    U --> X[Multi-sig Approvals]
+    U --> Y[Fund Distribution]
+    
+    P -- Governance --> U[PasifikaTreasury Contract]
+    
     L[Admin] --> M[Role Management]
     M --> B
     M --> G
     M --> P
+    M --> U
     
     N[Treasury] --> O[Token Distribution]
     O --> B
+    O --> U
+    
+    %% Planned Contracts For Production - Dotted Lines
+    A -.-> O1[PasifikaOracle Contract]
+    O1 -.-> O2[External Data Feeds]
+    O1 -.-> O3[Price Information]
+    
+    A -.-> CR[CulturalRegistry Contract]
+    CR -.-> CR1[Cultural Verification]
+    CR -.-> CR2[IP Management]
+    
+    A -.-> RD[RoyaltyDistribution Contract]
+    RD -.-> RD1[Creator Payments]
+    RD -.-> RD2[Community Funds]
+    
+    A -.-> VR[ValidatorRegistry Contract]
+    VR -.-> VR1[Validator Onboarding]
+    VR -.-> VR2[Performance Tracking]
+    
+    A -.-> NR[NodeRegistry Contract]
+    NR -.-> NR1[Node Management]
+    NR -.-> NR2[Rewards Distribution]
+    
+    A -.-> WG[WorkingGroups Contract]
+    WG -.-> WG1[Group Formation]
+    WG -.-> WG2[Task Management]
+    
+    A -.-> DR[DisputeResolution Contract]
+    DR -.-> DR1[Case Management]
+    DR -.-> DR2[Resolution Voting]
+    
+    A -.-> AC[AgentCoordination Contract]
+    AC -.-> AC1[Agent Registration]
+    AC -.-> AC2[Task Assignment]
+    
+    %% Connections between current and planned contracts
+    U -.-> RD
+    P -.-> WG
+    P -.-> DR
+    G -.-> VR
+    G -.-> NR
     
     subgraph "Smart Contract System"
+        %% Current Contracts
         B
         C
         D
@@ -265,6 +350,43 @@ graph TD
         R
         S
         T
+        U
+        V
+        W
+        X
+        Y
+        
+        %% Planned Contracts
+        O1
+        O2
+        O3
+        CR
+        CR1
+        CR2
+        RD
+        RD1
+        RD2
+        VR
+        VR1
+        VR2
+        NR
+        NR1
+        NR2
+        WG
+        WG1
+        WG2
+        DR
+        DR1
+        DR2
+        AC
+        AC1
+        AC2
+    end
+    
+    %% Legend
+    subgraph Legend
+        Z1[Implemented Contracts] --- Z2[Solid Lines]
+        Z3[Planned Contracts] -.- Z4[Dotted Lines]
     end
 ```
 
@@ -317,6 +439,13 @@ The smart contract system has been updated to ensure full compatibility with Ope
   - Implemented proper override patterns for `_update` and `nonces` functions
   - Added MINTER_ROLE for token minting capabilities
   - Fixed constructor parameter passing to match OpenZeppelin v5.3.0 requirements
+
+- **PasifikaTreasury**:
+  - Implemented multi-signature fund management with role-based access control
+  - Created budget categorization and allocation system
+  - Developed spending proposal and approval workflow with multiple signers
+  - Added security features including nonReentrant modifiers and fund recovery mechanisms
+  - Built with full OpenZeppelin v5.3.0 compatibility
 
 All contracts have been verified for compatibility with OpenZeppelin v5.3.0 and compile successfully.
 

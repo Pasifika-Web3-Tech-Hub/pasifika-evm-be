@@ -28,6 +28,7 @@ FEE_MANAGER="src/FeeManager.sol:FeeManager"
 DIGITAL_CONTENT_NFT="src/DigitalContentNFT.sol:DigitalContentNFT"
 PHYSICAL_ITEM_NFT="src/PhysicalItemNFT.sol:PhysicalItemNFT"
 WORKING_GROUPS="src/WorkingGroups.sol:WorkingGroups"
+PASIFIKA_TREASURY="src/PasifikaTreasury.sol:PasifikaTreasury"
 
 # Account name to use (default to pasifika-account)
 ACCOUNT_NAME="${2:-pasifika-account}"
@@ -67,8 +68,9 @@ if [ -z "$1" ]; then
     echo "8) DigitalContentNFT"
     echo "9) PhysicalItemNFT"
     echo "10) WorkingGroups"
-    echo "11) Custom contract path"
-    read -p "Enter your choice (1-11): " contract_choice
+    echo "11) PasifikaTreasury"
+    echo "12) Custom contract path"
+    read -p "Enter your choice (1-12): " contract_choice
     
     case $contract_choice in
         1)
@@ -202,6 +204,28 @@ if [ -z "$1" ]; then
             CONSTRUCTOR_ARGS="$STAKING_TOKEN_ADDRESS"
             ;;
         11)
+            CONTRACT=$PASIFIKA_TREASURY
+            CONTRACT_NAME="PasifikaTreasury"
+            echo -e "\n${YELLOW}PasifikaTreasury requires treasury and community fund addresses${NC}"
+            echo -e "\n${YELLOW}Enter the treasury address:${NC}"
+            read TREASURY_ADDRESS
+            
+            if [[ ! "$TREASURY_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                echo -e "${RED}Invalid treasury address format!${NC}"
+                exit 1
+            fi
+            
+            echo -e "\n${YELLOW}Enter the community fund address:${NC}"
+            read COMMUNITY_FUND_ADDRESS
+            
+            if [[ ! "$COMMUNITY_FUND_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                echo -e "${RED}Invalid community fund address format!${NC}"
+                exit 1
+            fi
+            
+            CONSTRUCTOR_ARGS="$TREASURY_ADDRESS $COMMUNITY_FUND_ADDRESS"
+            ;;
+        12)
             echo -e "\n${YELLOW}Enter the full contract path (e.g., src/CustomContract.sol:ContractName):${NC}"
             read custom_contract
             
@@ -268,6 +292,25 @@ else
         exit 1
     elif [[ "$CONTRACT_NAME" == "FeeManager" ]]; then
         echo -e "\n${YELLOW}FeeManager requires treasury and community fund addresses${NC}"
+        echo -e "\n${YELLOW}Enter the treasury address:${NC}"
+        read TREASURY_ADDRESS
+        
+        if [[ ! "$TREASURY_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid treasury address format!${NC}"
+            exit 1
+        fi
+        
+        echo -e "\n${YELLOW}Enter the community fund address:${NC}"
+        read COMMUNITY_FUND_ADDRESS
+        
+        if [[ ! "$COMMUNITY_FUND_ADDRESS" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+            echo -e "${RED}Invalid community fund address format!${NC}"
+            exit 1
+        fi
+        
+        CONSTRUCTOR_ARGS="$TREASURY_ADDRESS $COMMUNITY_FUND_ADDRESS"
+    elif [[ "$CONTRACT_NAME" == "PasifikaTreasury" ]]; then
+        echo -e "\n${YELLOW}PasifikaTreasury requires treasury and community fund addresses${NC}"
         echo -e "\n${YELLOW}Enter the treasury address:${NC}"
         read TREASURY_ADDRESS
         
