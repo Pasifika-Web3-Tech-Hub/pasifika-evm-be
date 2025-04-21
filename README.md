@@ -1,7 +1,7 @@
 # The Pasifika Web3 Tech Hub - Backend
 
 <div align="center">
-  <img src="public/pasifika.png" alt="Pasifika Web3 Tech Hub" width="300" height="300" />
+  <img src="./pasifika.png" alt="Pasifika Web3 Tech Hub" width="300" height="300" />
   <h2>Building the Future of Pacific Island Web3 Technology</h2>
   <p><em>Established 2025</em></p>
   <hr />
