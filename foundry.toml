@@ -18,5 +18,12 @@ key = "${POLYGONSCAN_API_KEY}"
 core-mainnet = "https://rpc.coredao.org"
 core-testnet = "https://rpc.test2.btcs.network"
 
+[profile.ci]
+src = 'src'
+out = 'out'
+libs = ['lib']
+solc = "0.8.20"
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./" }]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
