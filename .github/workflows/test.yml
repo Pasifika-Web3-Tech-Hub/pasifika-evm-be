@@ -49,7 +49,37 @@ jobs:
           ls -la test/
           forge test -vvv --list
 
-      - name: Run Forge tests
+      - name: Run basic role tests
         run: |
-          forge test -vvv --no-match-test "testFinalizeProfit|testProfitSharingState"
+          forge test -vvv --match-path "test/PasifikaBasicRoles.t.sol"
+        continue-on-error: true
+
+      - name: Run NFT tests
+        run: |
+          forge test -vvv --match-path "test/PasifikaNFT.t.sol"
+        continue-on-error: true
+
+      - name: Run membership tests
+        run: |
+          forge test -vvv --match-path "test/PasifikaMembership.t.sol"
+        continue-on-error: true
+         
+      - name: Run money transfer tests
+        run: |
+          forge test -vvv --match-path "test/PasifikaMoneyTransfer.t.sol"
+        continue-on-error: true
+         
+      - name: Run treasury tests
+        run: |
+          forge test -vvv --match-path "test/PasifikaTreasury.t.sol"
+        continue-on-error: true
+         
+      - name: Run profit sharing tests
+        run: |
+          forge test -vvv --match-path "test/ProfitSharing.t.sol" --no-match-test "testFinalizeProfit|testProfitSharingState"
+        continue-on-error: true
+
+      - name: Run all tests (with limited output)
+        run: |
+          forge test -vv --no-match-test "testFinalizeProfit|testProfitSharingState"
         id: test

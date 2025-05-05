@@ -32,5 +32,10 @@ evm_version = "london"
 memory_limit = 2048
 test_pattern = "test*.sol"
 no_match_test = "testFinalizeProfit|testProfitSharingState"
+block_timestamp = 1651990474
+block_number = 15000000
+gas_limit = 9223372036854775807
+initial_balance = "0xffffffffffffffffffffffff"
+sender = "0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
