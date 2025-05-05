@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Test} from "forge-std/Test.sol";
+import "forge-std/Test.sol";
 
 /**
- * @title CI Test
- * @dev This is a special test file that ensures CI passes
- * while the Arbitrum migration is in progress
+ * @title CITest
+ * @dev Simplified test that always passes for CI during Arbitrum migration
  */
 contract CITest is Test {
     function setUp() public {
         // Nothing to set up for CI test
     }
 
-    function test_CIPass() public {
-        // This test will always pass for CI
-        assertTrue(true);
+    /// @notice This test always passes to keep CI green during migration
+    function test_CIPass() public pure {
+        // This is intentionally empty and will always pass
+        // Used to maintain green CI during Arbitrum migration
     }
 }
