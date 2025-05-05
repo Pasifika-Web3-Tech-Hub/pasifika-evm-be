@@ -1,504 +1,146 @@
-# The Pasifika Web3 Tech Hub - Backend
+# The Pasifika - Arbitrum Implementation
 
 <div align="center">
-  <img src="./pasifika.png" alt="Pasifika Web3 Tech Hub" width="300" height="300" />
-  <h2>Building the Future of Pacific Island Web3 Technology</h2>
+  <img src="./pasifika.png" alt="Pasifika" width="300" height="300" />
+  <h2>Building the Future of Pacific Island Web3 Technology on Arbitrum</h2>
   <p><em>Established 2025</em></p>
   <hr />
+  <p><strong>"If we take care of our own, they will take care of us"</strong></p>
 </div>
 
 ## Overview
 
-The Pasifika Web3 Tech Hub backend is a decentralized physical infrastructure network (DePIN) designed for Pacific Island communities. The platform leverages Linea's zkEVM Layer-2 technology and the native PASIFIKA token (PSF) to create a sustainable economic ecosystem.
+The Pasifika backend is a decentralized physical infrastructure network (DePIN) designed for Pacific Island communities. This implementation leverages Arbitrum's Layer-2 scaling solution to create a sustainable economic ecosystem for Pacific Islanders.
+
+## Pasifika Philosophy
+
+At the heart of the Pasifika is our core philosophy:
+
+> **"If we take care of our own, they will take care of us"**
+
+This traditional Pacific Island value of communal support and shared prosperity guides our platform's design and economic model. We believe in building technology that reinforces our cultural values of community, reciprocity, and sustainability.
+
+## Pasifika Annual Profit-Sharing Event
+
+Inspired by our philosophy and the Bitcoin halving event, we've implemented the **Pasifika Annual Profit-Sharing Event** with the following features:
+
+- **Equal Distribution**: 50% of all profits incurred within the Pasifika Treasury are distributed equally to all eligible registered members
+- **Pasifika Financial Year**: Runs from December 27 (after Boxing Day) to December 24 (Christmas Eve)
+- **Initial Treasury**: Seeded with ETH to provide a foundation for our ecosystem
+- **Fully On-Chain**: All distributions are recorded on the Arbitrum blockchain, ensuring transparency and fairness
+- **Eligibility Requirements**: Members must complete at least 100 transactions AND have a transaction volume of at least 1 ETH during the financial year to qualify for profit sharing
+
+This event exemplifies our commitment to community wealth-sharing and ensuring that the benefits of technology reach all active members of our ecosystem, while encouraging platform participation.
 
 ## Technical Specifications
 
+- **Blockchain**: Arbitrum - Ethereum Layer 2 scaling solution
+- **Native Currency**: ETH (Ethereum)
+- **Development Framework:** Foundry
 - **Solidity Version:** 0.8.19 and 0.8.20
 - **OpenZeppelin:** v5.3.0
-- **Development Framework:** Foundry
 
-## Current Components
+## Arbitrum-Specific Components
 
-The backend currently consists of the following implemented components:
+The backend consists of the following Arbitrum-specific implementations:
 
-### Smart Contract System
+### 3-Tier System
 
-The smart contract system is built using Solidity and Foundry development toolkit:
+We've simplified our membership and fee structure to a 3-tier system:
 
-- **PSFToken Contract**: Core ERC-20 token (PSF) with:
-  - Governance extensions (ERC20Votes)
-  - Permit functionality (ERC20Permit)
-  - Access control for roles
-  - Token burning mechanism
-  - Vesting schedules for team, investors, and partners
-  - Staking functionality
-  - Pausability for emergency situations
+1. **Tier 0: Guest** 
+   - Default tier for all users
+   - 1% fee on all transactions
+   - No special requirements
 
-- **PSFStaking Contract**: Advanced staking mechanism with:
-  - Multiple staking tiers (Basic, Silver, Gold, Platinum, Validator, NodeOperator)
-  - Duration-based reward multipliers for longer staking periods
-  - Special roles for validators and node operators
-  - Dynamic governance weight calculation
-  - Flexible admin controls for tier requirements and bonuses
-  - Reward distribution system
-  - Security features including pausability and emergency withdrawals
+2. **Tier 1: Member**
+   - 0.5% fee on all transactions (50% discount)
+   - Requires membership (0.005 ETH)
 
-- **PasifikaDynamicNFT Contract**: NFT system with:
-  - Customizable metadata and on-chain state
-  - Cultural context verification
-  - Usage permissions and attestations
-  - State history tracking
-  - Transfer restrictions
-  
-- **PasifikaMarketplace Contract**: NFT marketplace with:
-  - Fixed price and auction listings
-  - Bidding mechanism for auctions
-  - Escrow functionality
-  - Dispute resolution
-  - Fee management system
-  - Admin controls
+3. **Tier 2: Member Node Operator**
+   - 0.25% fee on all transactions (75% discount)
+   - Requires operating a validator node on the network
 
-- **PasifikaDAO Contract**: Governance system with:
-  - Full compatibility with OpenZeppelin v5.3.0
-  - Time-locked proposal execution
-  - Role-based access control with admin and moderator roles
-  - Quorum-based voting
-  - Configurable voting delay, voting period, and proposal threshold
-  - Parameter adjustment functions for governance fine-tuning
+## Smart Contract System
 
-## Project Status: Proof of Concept (POC)
+The smart contract system leverages the native assets of the Arbitrum network:
 
-This repository currently contains 8 out of the 16 planned smart contracts for the full Pasifika Web3 Tech Hub ecosystem. This represents our Proof of Concept (POC) implementation, which demonstrates core functionalities and integration patterns. 
+- **ArbitrumTokenAdapter Contract**: Implementation of the 3-tier system for Arbitrum, handling:
+  - User tier management
+  - Fee calculation based on tier level
+  - Tier verification
 
-The remaining 8 contracts will be developed before the production release, which will complete the full suite of planned functionalities as outlined in the project documentation.
+- **PasifikaArbitrumNode Contract**: Node management for the Arbitrum network with:
+  - Node registration and activation
+  - Staking mechanism using ETH
+  - Validator status tracking
+  - Role-based access control
 
-### 8 Remaining Contracts for Production Release
+- **PasifikaMembership Contract**: Membership management with:
+  - Membership registration using 0.005 ETH
+  - Annual profit-sharing distribution of ETH to eligible members
+  - Transaction tracking for profit sharing eligibility
+  - Financial year calculations
+  - Member verification
 
-The following contracts are planned for implementation before the production release:
+- **PasifikaMoneyTransfer Contract**: Arbitrum-native money transfer with:
+  - Fee calculation based on user tier
+  - Integration with ArbitrumTokenAdapter
+  - Support for ETH transfers
+  - Secure transaction handling
 
-1. **PasifikaOracle**: Oracle system for fetching and verifying off-chain data.
-2. **CulturalRegistry**: Registry for cultural artifacts, traditions, and intellectual property.
-3. **RoyaltyDistribution**: System for distributing royalties to creators and communities.
-4. **ValidatorRegistry**: Registry and management system for network validators.
-5. **NodeRegistry**: Registry and management system for infrastructure node operators.
-6. **WorkingGroups**: Coordination system for specialized working groups within the ecosystem.
-7. **DisputeResolution**: System for resolving disputes in the marketplace and ecosystem.
-8. **AgentCoordination**: Framework for coordinating AI agent interactions and rewards.
+- **PasifikaTreasury Contract**: Multi-signature treasury management with:
+  - Budget categories and allocations
+  - Spending proposals and approvals
+  - Fund recovery mechanisms
+  - ETH management for profit-sharing events
 
-These contracts will complete the full technical architecture outlined in the project documentation.
+### Membership System
 
-## Smart Contracts Overview
+Our membership system is designed to provide clear benefits to platform participants:
 
-The Pasifika Web3 Tech Hub backend currently includes the following smart contracts:
+1. **Transaction Fee Discounts**:
+   - Members receive 50% off transaction fees
+   - Node operators receive 75% off transaction fees
 
-### Core Contracts
+2. **Annual Profit Sharing**:
+   - Eligible members receive an equal share of 50% of treasury profits
+   - Distribution happens at the end of the Pasifika Financial Year
 
-- **PSFToken**: ERC20 token with governance capabilities, the native token of the Pasifika ecosystem.
-  
-- **MockToken**: Simplified token implementation for testing governance functionality.
+3. **Platform Governance Rights**:
+   - Members gain voting rights on platform decisions
+   - Node operators receive additional voting weight
 
-- **PasifikaDAO**: Governance contract that allows token holders to propose, vote, and execute proposals through a timelock mechanism.
+### Deployment Process
 
-- **PSFStaking**: Advanced staking mechanism with tiers, duration-based rewards, and governance weight calculation.
+The deployment process is streamlined with Foundry's powerful toolkit:
 
-- **PasifikaTreasury**: Treasury management contract with:
-  - Multi-signature control for fund management
-  - Budget allocation system with categories
-  - Spending proposal and approval workflow
-  - Fund distribution with proper authorization checks
-  - Emergency recovery mechanisms
+1. **Setup**:
+   ```bash
+   $ forge build
+   ```
 
-### NFT Contracts
+2. **Testing**:
+   ```bash
+   $ forge test
+   ```
 
-- **PasifikaDynamicNFT**: Dynamic NFT implementation with on-chain state changes, cultural context verification, and usage permissions.
-  
-- **DigitalContentNFT**: Specialized NFT for digital content with access controls, usage rights, and cultural context preservation.
-  
-- **PhysicalItemNFT**: NFTs representing physical items with quality metrics, supply chain tracking, and authenticity verification.
+3. **Deployment to Arbitrum Network**:
+   ```bash
+   $ ./deploy/arbitrum-deploy.sh
+   ```
 
-### Marketplace Contracts
+For testnet deployments, use the `.env.testnet` configuration file.
 
-- **PasifikaMarketplace**: Marketplace for trading NFTs with fixed price and auction listings, escrow functionality, and dispute resolution.
-  
-- **FeeManager**: Manages, calculates, and distributes marketplace fees to various stakeholders including creators, community fund, and platform treasury.
+## Security and Transparency
 
-### Governance & Coordination
+Our contracts implement best practices for security:
 
-- **WorkingGroups**: Manages working groups and validators, with staking, reputation, and certification functionality for ecosystem governance.
-
-## Smart Contract Architecture
-
-### Dependencies and Libraries
-
-#### OpenZeppelin Contracts
-
-This project uses **OpenZeppelin Contracts v5.3.0** for implementing secure, standard-compliant smart contracts.
-
-- All contracts use the same version (v5.3.0) to ensure compatibility
-- Contracts inherit from OpenZeppelin's battle-tested implementations
-- Compiler uses IR-based pipeline for optimization
-
-**Key OpenZeppelin components used:**
-- Access Control (`AccessControl.sol`)
-- Token Standards (`ERC20.sol`, `ERC721.sol`)
-- Token Extensions (`ERC20Votes.sol`, `ERC721URIStorage.sol`) 
-- Security Utilities (`Pausable.sol`, `ReentrancyGuard.sol`)
-- Governance (`Governor.sol`, `GovernorTimelockControl.sol`, `GovernorSettings.sol`, etc.)
-
-**Best Practices for OpenZeppelin Integration:**
-1. **Version Consistency**: Always maintain consistent versions across all OpenZeppelin dependencies
-2. **Inheritance**: Use inheritance instead of reimplementing standard functionality
-3. **Override Safety**: When overriding OpenZeppelin functions, always call the parent implementation
-4. **Import Specificity**: Import only the specific contracts you need rather than full libraries
-5. **Testing**: Thoroughly test all custom extensions to OpenZeppelin contracts
-
-### Currently Implemented
-
-#### PSFToken.sol
-
-Core ERC-20 token contract for the PASIFIKA token (PSF).
-
-**Key Features:**
-- Standard ERC-20 functionality
-- Governance extensions (ERC20Votes)
-- Vesting schedules for team, investors, and partners
-- Staking functionality
-- Role-based access control
-- Pausability for emergency situations
-
-**Contract Components:**
-- Max supply of 1 billion tokens
-- Role definitions (ADMIN, MINTER, BURNER, TREASURY)
-- Vesting schedule management
-- Staking functionality
-- Token burning mechanism
-
-#### PSFStaking.sol
-
-Advanced staking contract that enables users to stake PSF tokens with varying tiers and durations.
-
-**Key Features:**
-- Tiered staking system with different rewards based on amount and duration
-- Duration-based multipliers for longer-term stakers
-- Special validator and node operator tiers with additional permissions
-- Dynamic governance weight calculation based on stake amount, tier, and remaining duration
-- Comprehensive reward calculation system
-- Administrative controls for adjusting tiers, rewards, and bonuses
-- Emergency controls including pausability and emergency withdrawals
-
-**Contract Components:**
-- StakeInfo structure for tracking stakes
-- TierRequirement structure for defining tier parameters
-- DurationBonus structure for rewarding longer-term stakers
-- Role-based access control (ADMIN, REWARDS_DISTRIBUTOR, VALIDATOR, NODE_OPERATOR)
-- Functions for creating, increasing, extending, and unstaking
-- Reward calculation and claiming mechanism
-- Governance weight calculation
-
-#### PasifikaMarketplace.sol
-
-NFT marketplace contract that enables buying, selling, and auctioning NFTs.
-
-**Key Features:**
-- Fixed price and auction listings
-- Bidding mechanism for auctions
-- Escrow functionality
-- Dispute resolution
-- Fee management
-- Admin controls
-
-**Contract Components:**
-- Listing structure for tracking listed items
-- Bid structure for tracking auction bids
-- Role-based access control (ADMIN, MODERATOR, FEE_MANAGER)
-- Escrow management
-- Auction timing and finalization
-
-#### PasifikaDAO.sol
-
-Governance contract that enables token holders to propose, vote on, and execute proposals.
-
-**Key Features:**
-- Full compatibility with OpenZeppelin v5.3.0 Governor contracts
-- Time-locked proposal execution through GovernorTimelockControl
-- Configurable voting parameters through GovernorSettings
-- Token-based voting power through GovernorVotes
-- Quorum-based decision making through GovernorVotesQuorumFraction
+- OpenZeppelin v5.3.0 libraries for access control, pausability, and reentrancy protection
+- Multi-signature requirements for treasury operations
 - Role-based access control for administrative functions
+- Fee collection mechanisms with transparent allocation
 
-**Contract Components:**
-- Role definitions (ADMIN_ROLE, MODERATOR_ROLE)
-- Voting delay, voting period, and proposal threshold settings
-- Quorum percentage configuration
-- Proposal lifecycle management (propose, vote, queue, execute)
-- Administrative functions for parameter adjustments
-- Override implementations for OpenZeppelin v5.3.0 compatibility
+## License
 
-#### PasifikaTreasury.sol
-
-Treasury management contract with multi-signature control for fund management.
-
-**Key Features:**
-- Multi-signature control for fund management
-- Budget allocation system with categories
-- Spending proposal and approval workflow
-- Fund distribution with proper authorization checks
-- Emergency recovery mechanisms
-
-**Contract Components:**
-- Role definitions (ADMIN, TREASURY_MANAGER)
-- Budget category management
-- Spending proposal and approval workflow
-- Fund distribution with authorization checks
-- Emergency recovery mechanisms
-
-## Process Flow Diagram
-
-```mermaid
-graph TD
-    %% Current Implemented Contracts - Solid Lines
-    A[User] --> B[PSFToken Contract]
-    B --> C[Token Transfers]
-    B --> D[Governance Voting]
-    B --> E1[Basic Staking]
-    B --> F[Vesting Management]
-    
-    A --> G[PSFStaking Contract]
-    G --> E2[Advanced Staking]
-    G --> H[Validator Management]
-    G --> I[Node Operator Management]
-    G --> J[Reward Distribution]
-    G --> K[Governance Weight]
-    
-    A --> P[PasifikaDAO Contract]
-    P --> Q[Proposal Creation]
-    P --> R[Voting]
-    P --> S[Proposal Execution]
-    P --> T[Parameter Configuration]
-    
-    A --> U[PasifikaTreasury Contract]
-    U --> V[Budget Allocation]
-    U --> W[Spending Proposals]
-    U --> X[Multi-sig Approvals]
-    U --> Y[Fund Distribution]
-    
-    P -- Governance --> U[PasifikaTreasury Contract]
-    
-    L[Admin] --> M[Role Management]
-    M --> B
-    M --> G
-    M --> P
-    M --> U
-    
-    N[Treasury] --> O[Token Distribution]
-    O --> B
-    O --> U
-    
-    %% Planned Contracts For Production - Dotted Lines
-    A -.-> O1[PasifikaOracle Contract]
-    O1 -.-> O2[External Data Feeds]
-    O1 -.-> O3[Price Information]
-    
-    A -.-> CR[CulturalRegistry Contract]
-    CR -.-> CR1[Cultural Verification]
-    CR -.-> CR2[IP Management]
-    
-    A -.-> RD[RoyaltyDistribution Contract]
-    RD -.-> RD1[Creator Payments]
-    RD -.-> RD2[Community Funds]
-    
-    A -.-> VR[ValidatorRegistry Contract]
-    VR -.-> VR1[Validator Onboarding]
-    VR -.-> VR2[Performance Tracking]
-    
-    A -.-> NR[NodeRegistry Contract]
-    NR -.-> NR1[Node Management]
-    NR -.-> NR2[Rewards Distribution]
-    
-    A -.-> WG[WorkingGroups Contract]
-    WG -.-> WG1[Group Formation]
-    WG -.-> WG2[Task Management]
-    
-    A -.-> DR[DisputeResolution Contract]
-    DR -.-> DR1[Case Management]
-    DR -.-> DR2[Resolution Voting]
-    
-    A -.-> AC[AgentCoordination Contract]
-    AC -.-> AC1[Agent Registration]
-    AC -.-> AC2[Task Assignment]
-    
-    %% Connections between current and planned contracts
-    U -.-> RD
-    P -.-> WG
-    P -.-> DR
-    G -.-> VR
-    G -.-> NR
-    
-    subgraph "Smart Contract System"
-        %% Current Contracts
-        B
-        C
-        D
-        E1
-        F
-        G
-        E2
-        H
-        I
-        J
-        K
-        M
-        P
-        Q
-        R
-        S
-        T
-        U
-        V
-        W
-        X
-        Y
-        
-        %% Planned Contracts
-        O1
-        O2
-        O3
-        CR
-        CR1
-        CR2
-        RD
-        RD1
-        RD2
-        VR
-        VR1
-        VR2
-        NR
-        NR1
-        NR2
-        WG
-        WG1
-        WG2
-        DR
-        DR1
-        DR2
-        AC
-        AC1
-        AC2
-    end
-    
-    %% Legend
-    subgraph Legend
-        Z1[Implemented Contracts] --- Z2[Solid Lines]
-        Z3[Planned Contracts] -.- Z4[Dotted Lines]
-    end
-```
-
-## Deployment
-
-Each contract has a corresponding deployment script in the `script` folder using Foundry's script system. The main deployment script is available at `deploy/deploy.sh` which provides an interactive deployment process.
-
-For PasifikaDAO and other contracts requiring complex setup:
-
-```shell
-# Deploy PasifikaDAO with its TimelockController
-$ forge script script/PasifikaDAO.s.sol --rpc-url <your_rpc_url> --broadcast
-
-# Deploy other contracts via the unified deployment script
-$ ./deploy/deploy.sh
-```
-
-## Development Tools
-
-### Foundry
-
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
-
-Foundry consists of:
-
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-### Documentation
-
-https://book.getfoundry.sh/
-
-## Recent Updates
-
-### OpenZeppelin v5.3.0 Compatibility
-
-The smart contract system has been updated to ensure full compatibility with OpenZeppelin v5.3.0:
-
-- **PasifikaDAO**:
-  - Implemented correct inheritance pattern with Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorVotesQuorumFraction, and GovernorTimelockControl
-  - Added proper function overrides for all inherited methods
-  - Implemented required new methods: `_queueOperations`, `_executeOperations`, and `proposalNeedsQueuing`
-  - Updated function calls to use specific parent implementation references
-  - Added role-based access control for administrative functions
-  
-- **MockToken**:
-  - Updated to properly inherit from ERC20, ERC20Permit, and ERC20Votes
-  - Implemented proper override patterns for `_update` and `nonces` functions
-  - Added MINTER_ROLE for token minting capabilities
-  - Fixed constructor parameter passing to match OpenZeppelin v5.3.0 requirements
-
-- **PasifikaTreasury**:
-  - Implemented multi-signature fund management with role-based access control
-  - Created budget categorization and allocation system
-  - Developed spending proposal and approval workflow with multiple signers
-  - Added security features including nonReentrant modifiers and fund recovery mechanisms
-  - Built with full OpenZeppelin v5.3.0 compatibility
-
-All contracts have been verified for compatibility with OpenZeppelin v5.3.0 and compile successfully.
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+This project is licensed under the MIT License - see the LICENSE file for details.

@@ -3,27 +3,26 @@ pragma solidity ^0.8.19;
 
 import {Script} from "forge-std/Script.sol";
 import {console} from "forge-std/console.sol";
-import {PasifikaMarketplace} from "../src/PasifikaMarketplace.sol";
+import {PasifikaMoneyTransfer} from "../src/PasifikaMoneyTransfer.sol";
 import {ArbitrumTokenAdapter} from "../src/ArbitrumTokenAdapter.sol";
-import {PasifikaNFT} from "../src/PasifikaNFT.sol";
+import {PasifikaArbitrumNode} from "../src/PasifikaArbitrumNode.sol";
 import {PasifikaTreasury} from "../src/PasifikaTreasury.sol";
 import {PasifikaMembership} from "../src/PasifikaMembership.sol";
 
 /**
- * @title PasifikaMarketplaceScript
- * @dev Deployment script for the PasifikaMarketplace that works with RSK native token (RBTC)
+ * @title PasifikaMoneyTransferScript
+ * @dev Deployment script for the PasifikaMoneyTransfer contract
  */
-contract PasifikaMarketplaceScript is Script {
-    PasifikaMarketplace public marketplace;
+contract PasifikaMoneyTransferScript is Script {
+    PasifikaMoneyTransfer public moneyTransfer;
     ArbitrumTokenAdapter public arbitrumTokenAdapter;
-    PasifikaNFT public pasifikaNFT;
+    PasifikaArbitrumNode public arbitrumNode;
     PasifikaTreasury public treasury;
     PasifikaMembership public membership;
     
     function run() public {
         // Using wallet alias from the keystore instead of private key
         address payable deployer = payable(msg.sender);
-        address payable feeRecipient = payable(vm.envAddress("FEE_RECIPIENT"));
         address payable treasuryWallet = payable(vm.envAddress("TREASURY_WALLET"));
         
         console.log("Deployer address:", deployer);
@@ -40,6 +39,20 @@ contract PasifikaMarketplaceScript is Script {
             arbitrumTokenAdapterAddress = payable(address(arbitrumTokenAdapter));
             vm.stopBroadcast();
             console.log("Deployed new ArbitrumTokenAdapter at:", arbitrumTokenAdapterAddress);
+        }
+        
+        // Get PasifikaArbitrumNode address if deployed
+        address payable arbitrumNodeAddress;
+        try vm.envAddress("ARBITRUM_NODE_ADDRESS") returns (address addr) {
+            arbitrumNodeAddress = payable(addr);
+            console.log("Using existing PasifikaArbitrumNode at:", arbitrumNodeAddress);
+        } catch {
+            // Deploy new PasifikaArbitrumNode
+            vm.startBroadcast();
+            arbitrumNode = new PasifikaArbitrumNode(deployer);
+            arbitrumNodeAddress = payable(address(arbitrumNode));
+            vm.stopBroadcast();
+            console.log("Deployed new PasifikaArbitrumNode at:", arbitrumNodeAddress);
         }
         
         // Get PasifikaTreasury address if deployed
@@ -66,66 +79,49 @@ contract PasifikaMarketplaceScript is Script {
             rifTokenAddress = address(0x9876); // Placeholder, only used for new deployments
         }
         
-        // Deploy marketplace
+        // Deploy PasifikaMoneyTransfer
         vm.startBroadcast();
         
-        marketplace = new PasifikaMarketplace(
-            feeRecipient,
-            treasuryWallet,
+        moneyTransfer = new PasifikaMoneyTransfer(
             arbitrumTokenAdapterAddress,
+            treasuryWallet,
             treasuryAddress
         );
         
-        // Add marketplace as fee collector to treasury
-        PasifikaTreasury(treasuryAddress).addFeeCollector(address(marketplace));
-        marketplace.initializeTreasury();
+        // Add money transfer as fee collector to treasury
+        PasifikaTreasury(treasuryAddress).addFeeCollector(address(moneyTransfer));
+        moneyTransfer.initializeTreasury();
         
-        // Check if NFT is already deployed
-        address nftAddress;
-        try vm.envAddress("ARBITRUM_NFT_ADDRESS") returns (address addr) {
-            nftAddress = addr;
-            console.log("Using existing PasifikaNFT at:", nftAddress);
-            
-            // Grant marketplace minter role
-            PasifikaNFT(nftAddress).grantRole(
-                keccak256("MINTER_ROLE"), 
-                address(marketplace)
-            );
-        } catch {
-            // Deploy new NFT contract if needed
-            string memory name = "Pasifika NFT";
-            string memory symbol = "PASIFIKA";
-            string memory baseURI = "https://pasifika.io/metadata/";
-            
-            pasifikaNFT = new PasifikaNFT(name, symbol, baseURI);
-            pasifikaNFT.setDefaultRoyalty(100); // 1% default royalty
-            nftAddress = address(pasifikaNFT);
-            console.log("Deployed new PasifikaNFT at:", nftAddress);
-            
-            // Grant marketplace minter role
-            pasifikaNFT.grantRole(
-                keccak256("MINTER_ROLE"), 
-                address(marketplace)
-            );
-        }
+        // Set standard fee to 1%
+        moneyTransfer.setBaseFeePercent(100); // 1%
+        
+        // Set member fee to 0.5%
+        moneyTransfer.setMemberFeePercent(50); // 0.5%
+        
+        // Set validator fee to 0.25%
+        moneyTransfer.setValidatorFeePercent(25); // 0.25%
         
         // Check if Membership is already deployed
         address payable membershipAddress;
         try vm.envAddress("ARBITRUM_MEMBERSHIP_ADDRESS") returns (address addr) {
             membershipAddress = payable(addr);
+            membership = PasifikaMembership(membershipAddress);
             console.log("Using existing PasifikaMembership at:", membershipAddress);
         } catch {
             // Deploy new Membership contract if needed
             vm.startBroadcast();
-            membership = new PasifikaMembership(treasuryAddress);
+            membership = new PasifikaMembership(payable(treasuryAddress));
             membershipAddress = payable(address(membership));
             console.log("Deployed new PasifikaMembership at:", membershipAddress);
         }
         
-        // Set membership contract in marketplace
-        marketplace.setMembershipContract(membershipAddress);
+        // Set membership contract
+        moneyTransfer.setMembershipContract(membershipAddress);
         
-        console.log("PasifikaMarketplace deployed at:", address(marketplace));
+        // Set node contract for validators
+        moneyTransfer.setNodeContract(arbitrumNodeAddress);
+        
+        console.log("PasifikaMoneyTransfer deployed at:", address(moneyTransfer));
         console.log("Integration completed");
         
         vm.stopBroadcast();
