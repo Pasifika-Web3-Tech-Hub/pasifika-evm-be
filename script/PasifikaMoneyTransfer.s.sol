@@ -19,14 +19,14 @@ contract PasifikaMoneyTransferScript is Script {
     PasifikaArbitrumNode public arbitrumNode;
     PasifikaTreasury public treasury;
     PasifikaMembership public membership;
-    
+
     function run() public {
         // Using wallet alias from the keystore instead of private key
         address payable deployer = payable(msg.sender);
         address payable treasuryWallet = payable(vm.envAddress("TREASURY_WALLET"));
-        
+
         console.log("Deployer address:", deployer);
-        
+
         // Get ArbitrumTokenAdapter address if deployed
         address payable arbitrumTokenAdapterAddress;
         try vm.envAddress("ARBITRUM_TOKEN_ADAPTER_ADDRESS") returns (address addr) {
@@ -40,7 +40,7 @@ contract PasifikaMoneyTransferScript is Script {
             vm.stopBroadcast();
             console.log("Deployed new ArbitrumTokenAdapter at:", arbitrumTokenAdapterAddress);
         }
-        
+
         // Get PasifikaArbitrumNode address if deployed
         address payable arbitrumNodeAddress;
         try vm.envAddress("ARBITRUM_NODE_ADDRESS") returns (address addr) {
@@ -54,7 +54,7 @@ contract PasifikaMoneyTransferScript is Script {
             vm.stopBroadcast();
             console.log("Deployed new PasifikaArbitrumNode at:", arbitrumNodeAddress);
         }
-        
+
         // Get PasifikaTreasury address if deployed
         address payable treasuryAddress;
         try vm.envAddress("ARBITRUM_TREASURY_ADDRESS") returns (address addr) {
@@ -68,7 +68,7 @@ contract PasifikaMoneyTransferScript is Script {
             vm.stopBroadcast();
             console.log("Deployed new PasifikaTreasury at:", treasuryAddress);
         }
-        
+
         // Get RIF token address for membership if needed
         address rifTokenAddress;
         try vm.envAddress("RIF_TOKEN_ADDRESS") returns (address addr) {
@@ -78,29 +78,25 @@ contract PasifikaMoneyTransferScript is Script {
             console.log("RIF_TOKEN_ADDRESS not set, will use a mock address for any new contracts");
             rifTokenAddress = address(0x9876); // Placeholder, only used for new deployments
         }
-        
+
         // Deploy PasifikaMoneyTransfer
         vm.startBroadcast();
-        
-        moneyTransfer = new PasifikaMoneyTransfer(
-            arbitrumTokenAdapterAddress,
-            treasuryWallet,
-            treasuryAddress
-        );
-        
+
+        moneyTransfer = new PasifikaMoneyTransfer(arbitrumTokenAdapterAddress, treasuryWallet, treasuryAddress);
+
         // Add money transfer as fee collector to treasury
         PasifikaTreasury(treasuryAddress).addFeeCollector(address(moneyTransfer));
         moneyTransfer.initializeTreasury();
-        
+
         // Set standard fee to 1%
         moneyTransfer.setBaseFeePercent(100); // 1%
-        
+
         // Set member fee to 0.5%
         moneyTransfer.setMemberFeePercent(50); // 0.5%
-        
+
         // Set validator fee to 0.25%
         moneyTransfer.setValidatorFeePercent(25); // 0.25%
-        
+
         // Check if Membership is already deployed
         address payable membershipAddress;
         try vm.envAddress("ARBITRUM_MEMBERSHIP_ADDRESS") returns (address addr) {
@@ -114,16 +110,16 @@ contract PasifikaMoneyTransferScript is Script {
             membershipAddress = payable(address(membership));
             console.log("Deployed new PasifikaMembership at:", membershipAddress);
         }
-        
+
         // Set membership contract
         moneyTransfer.setMembershipContract(membershipAddress);
-        
+
         // Set node contract for validators
         moneyTransfer.setNodeContract(arbitrumNodeAddress);
-        
+
         console.log("PasifikaMoneyTransfer deployed at:", address(moneyTransfer));
         console.log("Integration completed");
-        
+
         vm.stopBroadcast();
     }
 }

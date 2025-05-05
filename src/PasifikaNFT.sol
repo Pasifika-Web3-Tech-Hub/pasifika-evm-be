@@ -16,7 +16,7 @@ import "./PasifikaArbitrumNode.sol";
  * @dev A consolidated NFT contract for Pasifika
  * This contract handles minting, royalty management, and trading of NFTs
  * With special features for physical item minting and token-gated governance
- * 
+ *
  * NFTs can represent:
  * - Digital art
  * - Physical items with QR code tracking (supports authenticity & provenance)
@@ -30,25 +30,28 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
     struct Counter {
         uint256 _value; // default: 0
     }
-    
+
     function current(Counter storage counter) internal view returns (uint256) {
         return counter._value;
     }
-    
+
     function increment(Counter storage counter) internal {
         counter._value += 1;
     }
-    
+
     function decrement(Counter storage counter) internal {
         counter._value = counter._value - 1;
     }
-    
+
     function reset(Counter storage counter) internal {
         counter._value = 0;
     }
 
     // NFT Types
-    enum ItemType { Digital, Physical }
+    enum ItemType {
+        Digital,
+        Physical
+    }
 
     // Roles
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -65,15 +68,15 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
 
     // Royalty percentages (in basis points, e.g., 100 = 1%)
     uint96 public defaultRoyaltyPercent = 100; // 1% default royalty
-    uint96 public memberRoyaltyPercent = 50;   // 0.5% member royalty
+    uint96 public memberRoyaltyPercent = 50; // 0.5% member royalty
     uint96 public validatorRoyaltyPercent = 25; // 0.25% validator royalty
-    
+
     // Membership contract for membership verification
     PasifikaMembership public membershipContract;
-    
+
     // Node contract for validator node verification
     PasifikaArbitrumNode public nodeContract;
-    
+
     // Token metadata
     struct ItemMetadata {
         address creator;
@@ -101,11 +104,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
      * @param symbol Symbol of the NFT collection
      * @param baseURI Base URI for token metadata
      */
-    constructor(
-        string memory name,
-        string memory symbol,
-        string memory baseURI
-    ) ERC721(name, symbol) {
+    constructor(string memory name, string memory symbol, string memory baseURI) ERC721(name, symbol) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
         _baseTokenURI = baseURI;
@@ -146,7 +145,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         emit NFTMinted(tokenId, to, to, itemType);
         return tokenId;
     }
-    
+
     /**
      * @dev Set the token URI for a token
      * @param tokenId Token ID
@@ -156,7 +155,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         require(exists(tokenId), "PasifikaNFT: URI set of nonexistent token");
         _tokenURIs[tokenId] = _tokenURI;
     }
-    
+
     /**
      * @dev Override tokenURI function to return custom URI
      * @param tokenId Token ID
@@ -164,10 +163,10 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
      */
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(exists(tokenId), "PasifikaNFT: URI query for nonexistent token");
-        
+
         string memory _tokenURI = _tokenURIs[tokenId];
         string memory base = _baseURI();
-        
+
         // If there is no base URI, return the token URI.
         if (bytes(base).length == 0) {
             return _tokenURI;
@@ -179,7 +178,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         // If there is a baseURI but no tokenURI, concatenate the tokenID to the baseURI.
         return string.concat(base, Strings.toString(tokenId));
     }
-    
+
     /**
      * @dev Return base URI for token metadata
      * @return string Base URI
@@ -187,7 +186,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
     function _baseURI() internal view virtual override returns (string memory) {
         return _baseTokenURI;
     }
-    
+
     /**
      * @dev Set the base URI for all tokens
      * @param newBaseURI New base URI
@@ -196,7 +195,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         _baseTokenURI = newBaseURI;
         emit BaseURIUpdated(newBaseURI);
     }
-    
+
     /**
      * @dev Get the item type of a token
      * @param tokenId Token ID
@@ -206,7 +205,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         require(exists(tokenId), "PasifikaNFT: nonexistent token");
         return _itemMetadata[tokenId].itemType;
     }
-    
+
     /**
      * @dev Set the royalty percentage for validators
      * @param _validatorRoyaltyPercent New validator royalty percentage
@@ -216,7 +215,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         validatorRoyaltyPercent = _validatorRoyaltyPercent;
         emit ValidatorRoyaltyUpdated(_validatorRoyaltyPercent);
     }
-    
+
     /**
      * @dev Set the node contract for validator verification
      * @param _nodeContract Address of the node contract
@@ -234,7 +233,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
     function getValidatorRoyalty() external view returns (uint96) {
         return validatorRoyaltyPercent;
     }
-    
+
     /**
      * @dev Get the node contract
      * @return PasifikaArbitrumNode address
@@ -263,7 +262,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         if (exists(_tokenId)) {
             address creator = _itemMetadata[_tokenId].creator;
             uint96 royaltyPercentToUse = _itemMetadata[_tokenId].royaltyPercent;
-            
+
             // Check if the buyer is a validator
             if (address(nodeContract) != address(0) && nodeContract.isActiveNodeOperator(msg.sender)) {
                 royaltyPercentToUse = validatorRoyaltyPercent; // 0.25% for validators
@@ -272,7 +271,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
             else if (address(membershipContract) != address(0) && membershipContract.checkMembership(msg.sender)) {
                 royaltyPercentToUse = memberRoyaltyPercent; // 0.5% for members
             }
-            
+
             return (creator, (_salePrice * royaltyPercentToUse) / 10000);
         }
         return (address(0), (_salePrice * defaultRoyaltyPercent) / 10000);
@@ -285,7 +284,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
     function getDefaultRoyalty() external view returns (uint96) {
         return defaultRoyaltyPercent;
     }
-    
+
     /**
      * @dev Set default royalty percentage
      * @param royaltyPercent Default royalty percentage in basis points
@@ -323,7 +322,7 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         membershipContract = PasifikaMembership(payable(_membership));
         emit MembershipContractUpdated(_membership);
     }
-    
+
     /**
      * @dev Get the membership contract
      * @return address of the membership contract
@@ -341,17 +340,17 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         require(exists(tokenId), "PasifikaNFT: nonexistent token");
         return _itemMetadata[tokenId].creator;
     }
-    
+
     /**
      * @dev Burns a token
      * @param tokenId The token ID to burn
      */
     function burn(uint256 tokenId) external {
         address owner = ownerOf(tokenId);
-        require(owner == _msgSender() || 
-                isApprovedForAll(owner, _msgSender()) || 
-                getApproved(tokenId) == _msgSender(), 
-                "PasifikaNFT: caller is not owner nor approved");
+        require(
+            owner == _msgSender() || isApprovedForAll(owner, _msgSender()) || getApproved(tokenId) == _msgSender(),
+            "PasifikaNFT: caller is not owner nor approved"
+        );
         _update(address(0), tokenId, _msgSender());
     }
 
@@ -364,32 +363,31 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
      * @return royaltyPercent Royalty percentage
      * @return physicalDetails Physical details (if applicable)
      */
-    function getMetadata(uint256 tokenId) external view returns (
-        address creator,
-        string memory uri,
-        ItemType itemType,
-        uint96 royaltyPercent,
-        string memory physicalDetails
-    ) {
+    function getMetadata(uint256 tokenId)
+        external
+        view
+        returns (
+            address creator,
+            string memory uri,
+            ItemType itemType,
+            uint96 royaltyPercent,
+            string memory physicalDetails
+        )
+    {
         require(exists(tokenId), "PasifikaNFT: nonexistent token");
         ItemMetadata storage metadata = _itemMetadata[tokenId];
-        return (
-            metadata.creator,
-            metadata.tokenURI,
-            metadata.itemType,
-            metadata.royaltyPercent,
-            metadata.physicalDetails
-        );
+        return
+            (metadata.creator, metadata.tokenURI, metadata.itemType, metadata.royaltyPercent, metadata.physicalDetails);
     }
 
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) 
-        public 
-        view 
-        override(ERC721, AccessControl, IERC165) 
-        returns (bool) 
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, AccessControl, IERC165)
+        returns (bool)
     {
         return interfaceId == type(IERC2981).interfaceId || super.supportsInterface(interfaceId);
     }
@@ -403,20 +401,20 @@ contract PasifikaNFT is ERC721, AccessControl, IERC2981, Pausable, ReentrancyGua
         if (bytes(_tokenURIs[tokenId]).length != 0) {
             delete _tokenURIs[tokenId];
         }
-        
+
         // Clean up metadata
         delete _itemMetadata[tokenId];
     }
-    
+
     // Override the _update function to catch burn operations
     function _update(address to, uint256 tokenId, address auth) internal virtual override returns (address) {
         address from = super._update(to, tokenId, auth);
-        
+
         // If this is a burn operation (transfer to zero address)
         if (to == address(0)) {
             _afterBurn(tokenId);
         }
-        
+
         return from;
     }
 }

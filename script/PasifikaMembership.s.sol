@@ -13,10 +13,10 @@ import {PasifikaTreasury} from "../src/PasifikaTreasury.sol";
 contract PasifikaMembershipScript is Script {
     PasifikaMembership public membership;
     PasifikaTreasury public treasury;
-    
+
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        
+
         // Get PasifikaTreasury address if deployed
         address payable treasuryAddress;
         try vm.envAddress("PASIFIKA_TREASURY_ADDRESS") returns (address addr) {
@@ -31,17 +31,17 @@ contract PasifikaMembershipScript is Script {
             vm.stopBroadcast();
             console.log("Deployed new PasifikaTreasury at:", treasuryAddress);
         }
-        
+
         // Deploy PasifikaMembership
         vm.startBroadcast(deployerPrivateKey);
-        
+
         membership = new PasifikaMembership(treasuryAddress);
-        
+
         // Add membership as fee collector to treasury
         treasury.addFeeCollector(address(membership));
-        
+
         console.log("PasifikaMembership deployed at:", address(membership));
-        
+
         vm.stopBroadcast();
     }
 }

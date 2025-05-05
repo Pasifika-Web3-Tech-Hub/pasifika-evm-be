@@ -13,15 +13,15 @@ contract ArbitrumTokenAdapter is AccessControl {
 
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant TIER_MANAGER_ROLE = keccak256("TIER_MANAGER_ROLE");
-    
+
     // Tier levels - matching the Pasifika membership model
     uint256 public constant GUEST_TIER = 0;
     uint256 public constant MEMBER_TIER = 1;
     uint256 public constant NODE_OPERATOR_TIER = 2;
-    
+
     // Mapping to track user tiers
     mapping(address => uint256) public userTiers;
-    
+
     event EthReceived(address indexed sender, uint256 amount);
     event EthSent(address indexed recipient, uint256 amount);
     event TierAssigned(address indexed user, uint256 tier);
@@ -58,7 +58,7 @@ contract ArbitrumTokenAdapter is AccessControl {
     function getBalance() public view returns (uint256) {
         return address(this).balance;
     }
-    
+
     /**
      * @dev Assign a tier to a user
      * @param user Address of the user
@@ -67,11 +67,11 @@ contract ArbitrumTokenAdapter is AccessControl {
     function assignTier(address user, uint256 tier) external onlyRole(TIER_MANAGER_ROLE) {
         require(user != address(0), "ArbitrumTokenAdapter: Zero address");
         require(tier <= NODE_OPERATOR_TIER, "ArbitrumTokenAdapter: Invalid tier");
-        
+
         userTiers[user] = tier;
         emit TierAssigned(user, tier);
     }
-    
+
     /**
      * @dev Remove tier from a user
      * @param user Address of the user
@@ -79,11 +79,11 @@ contract ArbitrumTokenAdapter is AccessControl {
     function removeTier(address user) external onlyRole(TIER_MANAGER_ROLE) {
         require(user != address(0), "ArbitrumTokenAdapter: Zero address");
         require(userTiers[user] > 0, "ArbitrumTokenAdapter: User has no tier");
-        
+
         delete userTiers[user];
         emit TierRemoved(user);
     }
-    
+
     /**
      * @dev Check if a user has a specific tier
      * @param user Address of the user
@@ -93,7 +93,7 @@ contract ArbitrumTokenAdapter is AccessControl {
     function hasTier(address user, uint256 tier) external view returns (bool) {
         return userTiers[user] == tier;
     }
-    
+
     /**
      * @dev Get user's tier
      * @param user Address of the user

@@ -33,12 +33,7 @@ contract PasifikaArbitrumNode is AccessControl, Pausable {
      * @dev Registers a new node operator
      * @param operator Address of the node operator to register
      */
-    function registerNode(address operator) 
-        external 
-        payable 
-        onlyRole(ADMIN_ROLE) 
-        whenNotPaused 
-    {
+    function registerNode(address operator) external payable onlyRole(ADMIN_ROLE) whenNotPaused {
         require(!activeNodes[operator], "Node already registered");
         require(msg.value >= minimumStake, "Insufficient stake");
 
@@ -54,10 +49,7 @@ contract PasifikaArbitrumNode is AccessControl, Pausable {
      * @dev Deactivates a node operator
      * @param operator Address of the node operator to deactivate
      */
-    function deactivateNode(address operator) 
-        external 
-        onlyRole(ADMIN_ROLE) 
-    {
+    function deactivateNode(address operator) external onlyRole(ADMIN_ROLE) {
         require(activeNodes[operator], "Node not active");
 
         activeNodes[operator] = false;
@@ -69,11 +61,7 @@ contract PasifikaArbitrumNode is AccessControl, Pausable {
      * @dev Reactivates a previously deactivated node
      * @param operator Address of the node operator to reactivate
      */
-    function reactivateNode(address operator) 
-        external 
-        onlyRole(ADMIN_ROLE) 
-        whenNotPaused 
-    {
+    function reactivateNode(address operator) external onlyRole(ADMIN_ROLE) whenNotPaused {
         require(!activeNodes[operator] && nodeStakes[operator] > 0, "Node not properly registered");
 
         activeNodes[operator] = true;
@@ -85,10 +73,7 @@ contract PasifikaArbitrumNode is AccessControl, Pausable {
      * @dev Updates the minimum stake required for node operation
      * @param newMinimumStake New minimum stake amount in ETH
      */
-    function updateMinimumStake(uint256 newMinimumStake) 
-        external 
-        onlyRole(ADMIN_ROLE) 
-    {
+    function updateMinimumStake(uint256 newMinimumStake) external onlyRole(ADMIN_ROLE) {
         minimumStake = newMinimumStake;
         emit MinimumStakeUpdated(newMinimumStake);
     }
@@ -111,14 +96,9 @@ contract PasifikaArbitrumNode is AccessControl, Pausable {
      * @dev Adds additional stake to an existing node
      * @param operator Address of the node operator
      */
-    function addStake(address operator) 
-        external 
-        payable 
-        onlyRole(ADMIN_ROLE) 
-        whenNotPaused 
-    {
+    function addStake(address operator) external payable onlyRole(ADMIN_ROLE) whenNotPaused {
         require(nodeStakes[operator] > 0, "Node not registered");
-        
+
         nodeStakes[operator] += msg.value;
         emit StakeUpdated(operator, nodeStakes[operator]);
     }
