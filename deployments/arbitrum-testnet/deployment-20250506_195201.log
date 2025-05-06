@@ -1,0 +1,43 @@
+Pasifika Arbitrum Deployment Log - Tue May  6 07:52:01 PM +13 2025
+Network: Arbitrum Sepolia (Chain ID: 421614)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 1.74s
+Compiler run successful!
+Script ran successfully.
+
+== Logs ==
+  Deployer address: 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
+  Treasury wallet: 0x24B5e5e80825bBFb76591258C6D9F7C43aA72c50
+  Starting PasifikaMoneyTransfer deployment on Arbitrum...
+  Using existing ArbitrumTokenAdapter at: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+  Using existing PasifikaArbitrumNode at: 0xc79C57a047AD9B45B70D85000e9412C61f8fE336
+  Using existing PasifikaTreasury at: 0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4
+  PasifikaMoneyTransfer deployed at: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+  NOTE: To complete setup, the admin should manually:
+  1. Add money transfer as fee collector to treasury using the treasury's addFeeCollector function
+  2. Initialize the treasury connection using moneyTransfer.initializeTreasury()
+  3. Set fees using setBaseFeePercent, setMemberFeePercent, and setValidatorFeePercent
+  4. Set membership and node contracts using setMembershipContract and setNodeContract
+  PasifikaMoneyTransfer deployment completed successfully
+  Further setup required by admin with proper permissions
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 421614
+
+Estimated gas price: 0.200000001 gwei
+
+Estimated total gas used for script: 3311770
+
+Estimated amount required: 0.00066235400331177 ETH
+
+==========================
+
+Transactions saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/broadcast/PasifikaMoneyTransferAlias.s.sol/421614/run-latest.json
+
+Sensitive values saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/cache/PasifikaMoneyTransferAlias.s.sol/421614/run-latest.json
+

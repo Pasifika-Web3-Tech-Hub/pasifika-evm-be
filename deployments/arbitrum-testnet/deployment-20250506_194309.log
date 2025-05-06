@@ -1,0 +1,17 @@
+Pasifika Arbitrum Deployment Log - Tue May  6 07:43:09 PM +13 2025
+Network: Arbitrum Sepolia (Chain ID: 421614)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 1.45s
+Compiler run successful!
+Traces:
+  [5366946] → new PasifikaMembershipScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 26692 bytes of code
+
+  [2947] PasifikaMembershipScript::run()
+    ├─ [0] VM::envUint("PRIVATE_KEY") [staticcall]
+    │   └─ ← [Revert] vm.envUint: environment variable "PRIVATE_KEY" not found
+    └─ ← [Revert] vm.envUint: environment variable "PRIVATE_KEY" not found
+
+

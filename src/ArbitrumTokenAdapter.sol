@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 /**
  * @title ArbitrumTokenAdapter
  * @dev Adapter for handling native ETH on Arbitrum with tier functionality
+ * Optimized for Arbitrum network using native ETH
  */
 contract ArbitrumTokenAdapter is AccessControl {
     using Address for address payable;
@@ -34,7 +35,7 @@ contract ArbitrumTokenAdapter is AccessControl {
     }
 
     /**
-     * @dev Function to receive Ether. Emits a {EthReceived} event.
+     * @dev Function to receive ETH. Emits a {EthReceived} event.
      */
     receive() external payable {
         emit EthReceived(msg.sender, msg.value);

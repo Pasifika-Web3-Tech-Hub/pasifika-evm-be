@@ -19,7 +19,7 @@ contract PasifikaMembershipTest is Test {
     address public member3;
     address public treasuryWallet;
 
-    uint256 public membershipFee = 0.005 ether;
+    uint256 public membershipFee = 0.0001 ether;
 
     function setUp() public {
         // Create test accounts

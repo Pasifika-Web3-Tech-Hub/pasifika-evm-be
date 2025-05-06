@@ -1,0 +1,33 @@
+Pasifika Arbitrum Deployment Log - Tue May  6 07:46:29 PM +13 2025
+Network: Arbitrum Sepolia (Chain ID: 421614)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 1.35s
+Compiler run successful!
+Traces:
+  [2518012] → new PasifikaMembershipAliasScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 12466 bytes of code
+
+  [2272333] PasifikaMembershipAliasScript::run()
+    ├─ [0] console::log("Deploying PasifikaMembership with account:", DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::envAddress("ARBITRUM_TREASURY_ADDRESS") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Using existing PasifikaTreasury at:", 0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::startBroadcast()
+    │   └─ ← [Return] 
+    ├─ [2200292] → new PasifikaMembership@0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+    │   ├─ emit RoleGranted(role: 0x0000000000000000000000000000000000000000000000000000000000000000, account: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775, account: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0xf10a648816c66bb82e4981275deb41e7b5a299976e94da6857c2183fb90d411e, account: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0xde8487b500ef8d55eab1b33b644f1a688233afe2880463ff620c385624dbf576, account: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   └─ ← [Return] 9835 bytes of code
+    └─ ← [Revert] EvmError: Revert
+
+
+
+== Logs ==
+  Deploying PasifikaMembership with account: 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
+  Using existing PasifikaTreasury at: 0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4

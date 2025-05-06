@@ -1,0 +1,78 @@
+Pasifika Arbitrum Deployment Log - Tue May  6 07:42:27 PM +13 2025
+Network: Arbitrum Sepolia (Chain ID: 421614)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+No files changed, compilation skipped
+Traces:
+  [15357717] → new ArbitrumDeploymentScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 76550 bytes of code
+
+  [4372813] ArbitrumDeploymentScript::run()
+    ├─ [0] VM::envAddress("TREASURY_WALLET") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] VM::envAddress("FEE_RECIPIENT") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Beginning Pasifika deployment on Arbitrum") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Treasury Wallet:", 0x24B5e5e80825bBFb76591258C6D9F7C43aA72c50) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Fee Recipient:", 0xEd752dCE9f6c1Db35FeDABca445617A0d2B0b674) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::startBroadcast()
+    │   └─ ← [Return] 
+    ├─ [0] console::log("1. Deploying ArbitrumTokenAdapter...") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [647704] → new ArbitrumTokenAdapter@0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+    │   ├─ emit RoleGranted(role: 0x0000000000000000000000000000000000000000000000000000000000000000, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0x89caa9c901210ccd1a8670bb882b6bafb334eb4b114af790aeee702939f7a1fe, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   └─ ← [Return] 2866 bytes of code
+    ├─ [0] console::log("ArbitrumTokenAdapter deployed at:", ArbitrumTokenAdapter: [0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::toString(ArbitrumTokenAdapter: [0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517]) [staticcall]
+    │   └─ ← [Return] "0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517"
+    ├─ [0] VM::setEnv("TOKEN_ADAPTER_ADDRESS", "0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517")
+    │   └─ ← [Return] 
+    ├─ [0] console::log("2. Deploying PasifikaArbitrumNode...") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [768760] → new PasifikaArbitrumNode@0xc79C57a047AD9B45B70D85000e9412C61f8fE336
+    │   ├─ emit RoleGranted(role: 0x0000000000000000000000000000000000000000000000000000000000000000, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   └─ ← [Return] 3483 bytes of code
+    ├─ [0] console::log("PasifikaArbitrumNode deployed at:", PasifikaArbitrumNode: [0xc79C57a047AD9B45B70D85000e9412C61f8fE336]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::toString(PasifikaArbitrumNode: [0xc79C57a047AD9B45B70D85000e9412C61f8fE336]) [staticcall]
+    │   └─ ← [Return] "0xc79C57a047AD9B45B70D85000e9412C61f8fE336"
+    ├─ [0] VM::setEnv("NODE_ADDRESS", "0xc79C57a047AD9B45B70D85000e9412C61f8fE336")
+    │   └─ ← [Return] 
+    ├─ [0] console::log("3. Deploying PasifikaTreasury...") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [2717628] → new PasifikaTreasury@0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4
+    │   ├─ emit RoleGranted(role: 0x0000000000000000000000000000000000000000000000000000000000000000, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0x3496e2e73c4d42b75d702e60d9e48102720b8691234415963a5a857b86425d07, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0x7434c6f201a551bfd17336985361933e0c4935b520dac8a49d937b325f7d5c0a, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit FundCreated(fundName: 0xc263d9d588e3f4a23b460febdbeb7d07a28cdddcdda5f2ea8b5f8c83f73616eb, name: "Unallocated", allocation: 10000 [1e4])
+    │   └─ ← [Return] 12391 bytes of code
+    ├─ [0] console::log("PasifikaTreasury deployed at:", PasifikaTreasury: [0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::toString(PasifikaTreasury: [0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4]) [staticcall]
+    │   └─ ← [Return] "0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4"
+    ├─ [0] VM::setEnv("TREASURY_ADDRESS", "0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4")
+    │   └─ ← [Return] 
+    ├─ [3216] PasifikaTreasury::createFund("Development", 2000)
+    │   └─ ← [Revert] AccessControlUnauthorizedAccount(0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, 0x3496e2e73c4d42b75d702e60d9e48102720b8691234415963a5a857b86425d07)
+    └─ ← [Revert] AccessControlUnauthorizedAccount(0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, 0x3496e2e73c4d42b75d702e60d9e48102720b8691234415963a5a857b86425d07)
+
+
+
+== Logs ==
+  Beginning Pasifika deployment on Arbitrum
+  Treasury Wallet: 0x24B5e5e80825bBFb76591258C6D9F7C43aA72c50
+  Fee Recipient: 0xEd752dCE9f6c1Db35FeDABca445617A0d2B0b674
+  1. Deploying ArbitrumTokenAdapter...
+  ArbitrumTokenAdapter deployed at: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+  2. Deploying PasifikaArbitrumNode...
+  PasifikaArbitrumNode deployed at: 0xc79C57a047AD9B45B70D85000e9412C61f8fE336
+  3. Deploying PasifikaTreasury...
+  PasifikaTreasury deployed at: 0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4
