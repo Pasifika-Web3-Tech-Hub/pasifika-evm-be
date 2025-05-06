@@ -4,7 +4,9 @@ src = 'src'
 out = 'out'
 libs = ['lib']
 solc = "0.8.20"
-# Skip network-dependent tests
-test_pattern = "CI"
-fs_permissions = [{ access = "read", path = "./"}]
+# Test configuration
+match_path = "test/CI.t.sol"
+test_pattern = "test_CI*"
+match_contract = "CITest"
+fs_permissions = [{ access = "read-write", path = "./"}]
 verbosity = 3

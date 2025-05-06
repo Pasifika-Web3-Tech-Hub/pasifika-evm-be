@@ -27,6 +27,7 @@ jobs:
         run: |
           cp .env.example .env
           cp .github/foundry-ci.toml foundry.toml
+          chmod +x .github/ci-test.sh
           echo "CI environment configured"
 
       - name: Show Forge version
@@ -43,12 +44,14 @@ jobs:
           forge build --sizes
         id: build
 
-      - name: List test files
+      - name: Debug test files
         run: |
           ls -la test/
+          cat test/CI.t.sol
           echo "Running CI-only tests during Arbitrum migration"
 
       - name: Run CI test
         run: |
-          forge test -vvv
+          # Run CI-only test script
+          .github/ci-test.sh
         id: test
