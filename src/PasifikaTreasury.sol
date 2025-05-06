@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title PasifikaTreasury
@@ -89,7 +89,7 @@ contract PasifikaTreasury is AccessControl, ReentrancyGuard, Pausable {
 
         // Record deposit
         deposits.push(
-            Deposit({sender: msg.sender, amount: msg.value, timestamp: block.timestamp, description: "Direct deposit"})
+            Deposit({ sender: msg.sender, amount: msg.value, timestamp: block.timestamp, description: "Direct deposit" })
         );
 
         emit FundsDeposited(msg.sender, msg.value, "Direct deposit");
@@ -104,7 +104,7 @@ contract PasifikaTreasury is AccessControl, ReentrancyGuard, Pausable {
 
         // Record deposit
         deposits.push(
-            Deposit({sender: msg.sender, amount: msg.value, timestamp: block.timestamp, description: description})
+            Deposit({ sender: msg.sender, amount: msg.value, timestamp: block.timestamp, description: description })
         );
 
         // Allocate funds based on allocations
@@ -123,7 +123,7 @@ contract PasifikaTreasury is AccessControl, ReentrancyGuard, Pausable {
 
         // Record deposit
         deposits.push(
-            Deposit({sender: msg.sender, amount: msg.value, timestamp: block.timestamp, description: description})
+            Deposit({ sender: msg.sender, amount: msg.value, timestamp: block.timestamp, description: description })
         );
 
         // Allocate funds based on allocations
@@ -166,7 +166,7 @@ contract PasifikaTreasury is AccessControl, ReentrancyGuard, Pausable {
         );
 
         // Transfer funds
-        (bool success,) = payable(recipient).call{value: amount}("");
+        (bool success,) = payable(recipient).call{ value: amount }("");
         require(success, "PasifikaTreasury: transfer failed");
 
         emit FundsWithdrawn(recipient, amount, description, fundName);
@@ -232,7 +232,7 @@ contract PasifikaTreasury is AccessControl, ReentrancyGuard, Pausable {
         );
 
         // Transfer funds
-        (bool success,) = payable(recipient).call{value: amount}("");
+        (bool success,) = payable(recipient).call{ value: amount }("");
         require(success, "PasifikaTreasury: transfer failed");
 
         emit ProfitSharingWithdrawal(recipient, amount);
@@ -263,7 +263,7 @@ contract PasifikaTreasury is AccessControl, ReentrancyGuard, Pausable {
         fundNames.push(fundName);
 
         // Create fund allocation
-        funds[fundName] = FundAllocation({name: name, allocation: allocation, balance: 0, active: true});
+        funds[fundName] = FundAllocation({ name: name, allocation: allocation, balance: 0, active: true });
 
         // Adjust other allocations if needed
         if (fundName != UNALLOCATED_FUND) {
@@ -489,7 +489,7 @@ contract PasifikaTreasury is AccessControl, ReentrancyGuard, Pausable {
         }
 
         // Transfer all balance
-        (bool success,) = payable(recipient).call{value: balance}("");
+        (bool success,) = payable(recipient).call{ value: balance }("");
         require(success, "PasifikaTreasury: transfer failed");
 
         emit EmergencyWithdrawal(msg.sender, balance, recipient);

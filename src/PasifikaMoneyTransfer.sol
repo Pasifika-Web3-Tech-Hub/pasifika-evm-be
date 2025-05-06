@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./ArbitrumTokenAdapter.sol";
 import "./PasifikaMembership.sol";
@@ -227,11 +227,7 @@ contract PasifikaMoneyTransfer is AccessControl, Pausable, ReentrancyGuard {
     );
     event ScheduledTransferCancelled(uint256 indexed transferId);
     event CommunityCollectionCreated(
-        uint256 indexed collectionId,
-        address indexed creator,
-        string purpose,
-        uint256 goal,
-        uint256 deadline
+        uint256 indexed collectionId, address indexed creator, string purpose, uint256 goal, uint256 deadline
     );
     event ContributionMade(uint256 indexed collectionId, address indexed contributor, uint256 amount);
     event RemittanceCreated(uint256 indexed transactionId, string countryCode, string currencyCode);
@@ -334,7 +330,7 @@ contract PasifikaMoneyTransfer is AccessControl, Pausable, ReentrancyGuard {
         // Send fee to treasury
         if (fee > 0) {
             // Use the depositFees function in the treasury
-            treasury.depositFees{value: fee}("Money transfer fee");
+            treasury.depositFees{ value: fee }("Money transfer fee");
         }
 
         // Update last transfer time
@@ -342,7 +338,7 @@ contract PasifikaMoneyTransfer is AccessControl, Pausable, ReentrancyGuard {
 
         // Record transaction for profit sharing eligibility (if membership contract is set)
         if (address(membershipContract) != address(0)) {
-            try PasifikaMembership(membershipContract).recordTransaction(msg.sender, amount) {} catch {}
+            try PasifikaMembership(membershipContract).recordTransaction(msg.sender, amount) { } catch { }
         }
 
         // Create transaction record
@@ -362,7 +358,7 @@ contract PasifikaMoneyTransfer is AccessControl, Pausable, ReentrancyGuard {
     }
 
     // Rest of contract methods unchanged
-    
+
     /**
      * @dev Calculate fee based on user's tier
      * @param amount Amount to calculate fee for
@@ -371,11 +367,11 @@ contract PasifikaMoneyTransfer is AccessControl, Pausable, ReentrancyGuard {
      */
     function calculateFee(uint256 amount, address sender) public view returns (uint256) {
         uint256 feePercent = baseFeePercent; // Default fee percent (1%)
-        
+
         // Check if sender has a tier in the adapter
         if (address(arbitrumTokenAdapter) != address(0)) {
             uint256 tier = arbitrumTokenAdapter.getUserTier(sender);
-            
+
             // Apply tier discount if applicable
             if (tier > 0 && tierDiscounts[tier] > 0) {
                 // Calculate discounted fee percent
@@ -383,24 +379,24 @@ contract PasifikaMoneyTransfer is AccessControl, Pausable, ReentrancyGuard {
                 feePercent = baseFeePercent - discount;
             }
         }
-        
+
         // Calculate fee amount
         uint256 feeAmount = (amount * feePercent) / 10000;
-        
+
         // Ensure fee is within limits
         if (feeAmount < minFee) {
             feeAmount = minFee;
         } else if (feeAmount > maxFee) {
             feeAmount = maxFee;
         }
-        
+
         return feeAmount;
     }
 
     /**
      * @dev Allow receiving ETH
      */
-    receive() external payable {}
+    receive() external payable { }
 
     /**
      * @dev Withdraw pending funds
@@ -414,7 +410,7 @@ contract PasifikaMoneyTransfer is AccessControl, Pausable, ReentrancyGuard {
         pendingWithdrawals[msg.sender] = 0;
 
         // Send the funds
-        (bool success,) = msg.sender.call{value: amount}("");
+        (bool success,) = msg.sender.call{ value: amount }("");
         require(success, "PasifikaMoneyTransfer: transfer failed");
 
         emit FundsWithdrawn(msg.sender, amount);

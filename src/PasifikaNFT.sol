@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {IERC2981} from "@openzeppelin/contracts/interfaces/IERC2981.sol";
-import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { IERC2981 } from "@openzeppelin/contracts/interfaces/IERC2981.sol";
+import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./PasifikaMembership.sol";
 import "./PasifikaArbitrumNode.sol";
 

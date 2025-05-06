@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Script} from "forge-std/Script.sol";
-import {console} from "forge-std/console.sol";
-import {PasifikaTreasury} from "../src/PasifikaTreasury.sol";
-import {PasifikaMarketplace} from "../src/PasifikaMarketplace.sol";
-import {PasifikaMoneyTransfer} from "../src/PasifikaMoneyTransfer.sol";
-import {PasifikaMembership} from "../src/PasifikaMembership.sol";
+import { Script } from "forge-std/Script.sol";
+import { console } from "forge-std/console.sol";
+import { PasifikaTreasury } from "../src/PasifikaTreasury.sol";
+import { PasifikaMarketplace } from "../src/PasifikaMarketplace.sol";
+import { PasifikaMoneyTransfer } from "../src/PasifikaMoneyTransfer.sol";
+import { PasifikaMembership } from "../src/PasifikaMembership.sol";
 
 /**
  * @title PasifikaTreasuryScript

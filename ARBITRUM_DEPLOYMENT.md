@@ -2,6 +2,20 @@
 
 This guide provides step-by-step instructions for deploying the Pasifika contracts to the Arbitrum network.
 
+## Deployment Status
+
+**May 2025 Update**: Successfully deployed to Arbitrum Sepolia testnet!
+
+| Contract | Address |
+|----------|---------|
+| ArbitrumTokenAdapter | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
+| PasifikaArbitrumNode | 0xc79C57a047AD9B45B70D85000e9412C61f8fE336 |
+| PasifikaTreasury | 0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4 |
+| PasifikaMembership | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
+| PasifikaMoneyTransfer | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
+
+All contract addresses and ABIs are saved in the frontend directory for easy integration.
+
 ## Prerequisites
 
 1. Make sure you have Foundry installed and updated to the latest version:
@@ -9,148 +23,168 @@ This guide provides step-by-step instructions for deploying the Pasifika contrac
    foundryup
    ```
 
-2. Create a `.env` file by copying the example file:
+2. Create a `.env.testnet` file by copying the example file:
    ```bash
-   cp .env.example .env
+   cp .env.example .env.testnet
    ```
 
-3. Fill in your `.env` file with the appropriate values:
-   - `PRIVATE_KEY`: Your deployer wallet's private key
-   - `ARBITRUM_RPC_URL`: URL for the Arbitrum network (mainnet or testnet)
-   - `FEE_RECIPIENT`: Address that will receive marketplace fees
-   - `TREASURY_WALLET`: Address for treasury operations
-   - `ARBISCAN_API_KEY`: Your Arbiscan API key (for contract verification)
+3. Setup your wallet using Foundry's secure keystore:
+   ```bash
+   cast wallet import --interactive pasifika-account
+   ```
+   
+   This will prompt you to enter a password and your private key. The wallet will be stored securely in Foundry's keystore.
+
+4. Fill in your `.env.testnet` file with the appropriate values:
+   ```
+   # Network Configuration
+   ARBITRUM_NETWORK=testnet  # or "mainnet" for production
+   RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
+   ARBITRUM_MAINNET_RPC_URL=https://arb1.arbitrum.io/rpc
+   
+   # Wallet Configuration
+   WALLET_ALIAS=pasifika-account
+   
+   # Application Configuration
+   FEE_RECIPIENT=0xEd752dCE9f6c1Db35FeDABca445617A0d2B0b674
+   TREASURY_WALLET=0x24B5e5e80825bBFb76591258C6D9F7C43aA72c50
+   
+   # Contract Verification
+   VERIFY_CONTRACTS=true
+   ARBISCAN_API_KEY=your_arbiscan_api_key
+   ```
 
 ## Deployment Options
 
-### Option 1: Deploy All Contracts Together
+Our new `arbitrum-deploy.sh` script provides a flexible way to deploy contracts:
 
-Use the comprehensive deployment script to deploy all contracts at once:
+### Deploy All Contracts
 
-```bash
-forge script script/ArbitrumDeployment.s.sol --rpc-url $ARBITRUM_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify
-```
-
-This script will:
-1. Deploy ArbitrumTokenAdapter
-2. Deploy PasifikaArbitrumNode
-3. Deploy PasifikaTreasury
-4. Create default funds in Treasury
-5. Deploy PasifikaMembership
-6. Deploy PasifikaNFT
-7. Deploy PasifikaMoneyTransfer
-8. Deploy PasifikaMarketplace
-9. Configure all the connections between contracts
-
-### Option 2: Deploy Contracts Individually
-
-#### 1. Deploy PasifikaTreasury
+To deploy all contracts in the correct dependency order:
 
 ```bash
-forge script script/PasifikaTreasury.s.sol --rpc-url $ARBITRUM_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify
+./deploy/arbitrum-deploy.sh all
 ```
 
-Set the deployed address in your `.env` file:
-```
-ARBITRUM_TREASURY_ADDRESS=0x...
-```
+This will deploy:
+1. ArbitrumTokenAdapter
+2. PasifikaArbitrumNode
+3. PasifikaTreasury
+4. PasifikaMembership
+5. PasifikaMoneyTransfer
 
-#### 2. Deploy PasifikaMembership
+### Deploy Individual Contracts
+
+You can also deploy individual contracts as needed:
 
 ```bash
-forge script script/PasifikaMembership.s.sol --rpc-url $ARBITRUM_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify
+# Deploy the token adapter
+./deploy/arbitrum-deploy.sh token-adapter
+
+# Deploy the node contract
+./deploy/arbitrum-deploy.sh node
+
+# Deploy the treasury
+./deploy/arbitrum-deploy.sh treasury
+
+# Deploy the membership contract
+./deploy/arbitrum-deploy.sh membership
+
+# Deploy the money transfer contract
+./deploy/arbitrum-deploy.sh money-transfer
 ```
 
-Set the deployed address in your `.env` file:
-```
-ARBITRUM_MEMBERSHIP_ADDRESS=0x...
-```
+The script automatically:
+- Checks for required dependencies before deployment
+- Saves contract addresses to individual JSON files in the frontend directory
+- Copies ABI files to the frontend directory
+- Updates environment variables in `.env.testnet`
+- Creates detailed deployment logs
 
-#### 3. Deploy PasifikaMoneyTransfer
+## Post-Deployment Configuration
 
-```bash
-forge script script/PasifikaMoneyTransfer.s.sol --rpc-url $ARBITRUM_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify
-```
+After deploying the contracts, the admin must perform the following steps to complete the integration:
 
-Set the deployed address in your `.env` file:
-```
-ARBITRUM_MONEY_TRANSFER_ADDRESS=0x...
-```
-
-#### 4. Deploy Other Contracts
-
-Continue with the deployment of any other contracts as needed.
-
-## Post-Deployment Verification
-
-After deployment, verify that all contracts are working correctly:
-
-1. Check contract integrations:
-   ```bash
-   cast call $ARBITRUM_MONEY_TRANSFER_ADDRESS "membershipContract()" --rpc-url $ARBITRUM_RPC_URL
+1. Add PasifikaMembership as a fee collector in PasifikaTreasury:
+   ```solidity
+   // Call from admin account
+   treasury.addFeeCollector(membershipAddress);
    ```
 
-2. Verify fee configurations:
-   ```bash
-   cast call $ARBITRUM_MONEY_TRANSFER_ADDRESS "baseFeePercent()" --rpc-url $ARBITRUM_RPC_URL
-   cast call $ARBITRUM_MONEY_TRANSFER_ADDRESS "memberFeePercent()" --rpc-url $ARBITRUM_RPC_URL
-   cast call $ARBITRUM_MONEY_TRANSFER_ADDRESS "validatorFeePercent()" --rpc-url $ARBITRUM_RPC_URL
+2. Add PasifikaMoneyTransfer as a fee collector in PasifikaTreasury:
+   ```solidity
+   // Call from admin account
+   treasury.addFeeCollector(moneyTransferAddress);
    ```
 
-3. Check treasury funds:
-   ```bash
-   cast call $ARBITRUM_TREASURY_ADDRESS "getTotalBalance()" --rpc-url $ARBITRUM_RPC_URL
+3. Initialize the Treasury connection in PasifikaMoneyTransfer:
+   ```solidity
+   // Call from admin account
+   moneyTransfer.initializeTreasury();
    ```
 
-## Running Tests
+4. Set appropriate fee percentages:
+   ```solidity
+   // Call from admin account
+   moneyTransfer.setBaseFeePercent(100);     // 1%
+   moneyTransfer.setMemberFeePercent(50);    // 0.5%
+   moneyTransfer.setValidatorFeePercent(25); // 0.25%
+   ```
 
-### Local Testing
+5. Connect contracts together:
+   ```solidity
+   // Call from admin account
+   moneyTransfer.setMembershipContract(membershipAddress);
+   moneyTransfer.setNodeContract(nodeAddress);
+   ```
 
-To run tests in a local environment:
+## Frontend Integration
 
-```bash
-forge test
+The deployment script automatically saves contract addresses and ABIs to the frontend directory:
+
+```
+/home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-fe/deployed_contracts/
 ```
 
-### Forked Testing
+Each contract has:
+- `ContractName.json` - Contains the contract address and network information
+- `ContractName_ABI.json` - Contains the contract ABI for integration
 
-To run tests against a fork of the Arbitrum network:
+## Troubleshooting
 
-```bash
-forge test --fork-url $ARBITRUM_RPC_URL
+1. **Insufficient Funds Error**:
+   - Make sure your wallet has enough ETH to cover the deployment costs
+   - For Arbitrum Sepolia testnet, get ETH from a faucet
+
+2. **Access Control Issues**:
+   - These are expected during deployment and are handled by the post-deployment configuration
+   - Only admins can perform certain operations like adding fee collectors
+
+3. **Contract Verification Failure**:
+   - Ensure your ARBISCAN_API_KEY is correctly set in .env.testnet
+   - Check that the VERIFY_CONTRACTS flag is set to true
+
+## Mainnet Deployment
+
+For mainnet deployment, follow the same steps but update your `.env.testnet` file:
+
+```
+ARBITRUM_NETWORK=mainnet
+RPC_URL=https://arb1.arbitrum.io/rpc
 ```
 
-## Common Issues and Solutions
+Ensure you have sufficient ETH in your wallet to cover deployment costs on mainnet.
 
-1. **Contract Verification Fails**: If contract verification fails, try manually verifying through Arbiscan using the flattened contract:
-   ```bash
-   forge flatten src/PasifikaMoneyTransfer.sol > PasifikaMoneyTransfer_flat.sol
-   ```
+## Contract Addresses Reference
 
-2. **Gas Estimation Errors**: Arbitrum may require different gas settings. Try adding `--legacy` flag for transactions:
-   ```bash
-   forge script script/ArbitrumDeployment.s.sol --rpc-url $ARBITRUM_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify --legacy
-   ```
+Keep a record of all deployed contract addresses:
 
-3. **Arbitrum Node Connectivity**: If experiencing RPC issues, try an alternative RPC provider or increase timeout settings.
+```
+ArbitrumTokenAdapter: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+PasifikaArbitrumNode: 0xc79C57a047AD9B45B70D85000e9412C61f8fE336
+PasifikaTreasury: 0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4
+PasifikaMembership: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+PasifikaMoneyTransfer: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+```
 
-## Contract Addresses
-
-After deployment, update the following section with your deployed contract addresses:
-
-- ArbitrumTokenAdapter: `0x...`
-- PasifikaArbitrumNode: `0x...`
-- PasifikaTreasury: `0x...`
-- PasifikaMembership: `0x...`
-- PasifikaMoneyTransfer: `0x...`
-- PasifikaNFT: `0x...`
-- PasifikaMarketplace: `0x...`
-
-## Notes on Arbitrum Specifics
-
-1. The contracts now use native ETH instead of RBTC
-2. Gas fees on Arbitrum are typically lower than Ethereum mainnet
-3. Membership fee is set to 0.0001 ETH to be appropriate for Arbitrum
-4. All contracts handle native ETH transactions without any token wrappers
-
-For any assistance, please contact the development team.
+These addresses should match what's updated in your `.env.testnet` file and saved to the frontend directory.

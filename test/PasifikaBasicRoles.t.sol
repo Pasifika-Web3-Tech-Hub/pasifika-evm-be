@@ -82,7 +82,7 @@ contract PasifikaBasicRolesTest is Test {
 
         // Perform transfer from bob to alice
         vm.prank(bob);
-        moneyTransfer.transfer{value: 0.5 ether}(alice, 0.5 ether, "Test transfer");
+        moneyTransfer.transfer{ value: 0.5 ether }(alice, 0.5 ether, "Test transfer");
 
         // Calculate expected received amount
         uint256 fee = 0.5 ether * moneyTransfer.baseFeePercent() / 10000; // 1% default fee

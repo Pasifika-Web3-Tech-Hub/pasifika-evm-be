@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Test, console} from "forge-std/Test.sol";
-import {PasifikaNFT} from "../src/PasifikaNFT.sol";
-import {PasifikaMembership} from "../src/PasifikaMembership.sol";
-import {PasifikaTreasury} from "../src/PasifikaTreasury.sol";
+import { Test, console } from "forge-std/Test.sol";
+import { PasifikaNFT } from "../src/PasifikaNFT.sol";
+import { PasifikaMembership } from "../src/PasifikaMembership.sol";
+import { PasifikaTreasury } from "../src/PasifikaTreasury.sol";
 
 contract PasifikaNFTTest is Test {
     PasifikaNFT public nft;
@@ -52,7 +52,7 @@ contract PasifikaNFTTest is Test {
 
         // Make memberBuyer a member
         vm.startPrank(memberBuyer);
-        membership.joinMembership{value: membershipFee}();
+        membership.joinMembership{ value: membershipFee }();
         vm.stopPrank();
     }
 

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import {IERC2981} from "@openzeppelin/contracts/interfaces/IERC2981.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import { IERC2981 } from "@openzeppelin/contracts/interfaces/IERC2981.sol";
 
 import "./ArbitrumTokenAdapter.sol";
 import "./PasifikaTreasury.sol";
@@ -267,7 +267,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
                 remainingAmount = finalPrice - royaltyAmount;
 
                 // Transfer royalties
-                (bool royaltySuccess,) = payable(receiver).call{value: royaltyAmount}("");
+                (bool royaltySuccess,) = payable(receiver).call{ value: royaltyAmount }("");
                 require(royaltySuccess, "PasifikaMarketplace: royalty transfer failed");
 
                 emit RoyaltyPaid(listing.tokenId, receiver, royaltyAmount);
@@ -290,7 +290,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
             pendingWithdrawals[listingId][listing.seller] = sellerAmount;
         } else {
             // Transfer funds to seller directly
-            (bool success,) = payable(listing.seller).call{value: sellerAmount}("");
+            (bool success,) = payable(listing.seller).call{ value: sellerAmount }("");
             require(success, "PasifikaMarketplace: transfer to seller failed");
         }
 
@@ -300,7 +300,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
         // Send total fee to treasury
         if (totalFee > 0) {
             // Use the depositFees function in the treasury
-            (bool treasurySuccess,) = address(treasury).call{value: totalFee}(
+            (bool treasurySuccess,) = address(treasury).call{ value: totalFee }(
                 abi.encodeWithSignature(
                     "depositFees(string)",
                     string(abi.encodePacked("Marketplace fee from NFT sale #", _toString(listing.tokenId)))
@@ -314,7 +314,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
 
         // Refund excess payment
         if (msg.value > finalPrice) {
-            (bool refundSuccess,) = payable(msg.sender).call{value: msg.value - finalPrice}("");
+            (bool refundSuccess,) = payable(msg.sender).call{ value: msg.value - finalPrice }("");
             require(refundSuccess, "PasifikaMarketplace: refund failed");
         }
 
@@ -386,7 +386,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
                 remainingAmount = finalPrice - royaltyAmount;
 
                 // Transfer royalties
-                (bool royaltySuccess,) = payable(receiver).call{value: royaltyAmount}("");
+                (bool royaltySuccess,) = payable(receiver).call{ value: royaltyAmount }("");
                 require(royaltySuccess, "PasifikaMarketplace: royalty transfer failed");
 
                 emit RoyaltyPaid(listing.tokenId, receiver, royaltyAmount);
@@ -409,7 +409,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
             pendingWithdrawals[listingId][listing.seller] = sellerAmount;
         } else {
             // Transfer funds to seller directly
-            (bool success,) = payable(listing.seller).call{value: sellerAmount}("");
+            (bool success,) = payable(listing.seller).call{ value: sellerAmount }("");
             require(success, "PasifikaMarketplace: transfer to seller failed");
         }
 
@@ -419,7 +419,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
         // Send total fee to treasury
         if (totalFee > 0) {
             // Use the depositFees function in the treasury
-            (bool treasurySuccess,) = address(treasury).call{value: totalFee}(
+            (bool treasurySuccess,) = address(treasury).call{ value: totalFee }(
                 abi.encodeWithSignature(
                     "depositFees(string)",
                     string(abi.encodePacked("Marketplace fee from NFT sale #", _toString(listing.tokenId)))
@@ -465,7 +465,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
                 remainingAmount = finalPrice - royaltyAmount;
 
                 // Transfer royalties
-                (bool royaltySuccess,) = payable(receiver).call{value: royaltyAmount}("");
+                (bool royaltySuccess,) = payable(receiver).call{ value: royaltyAmount }("");
                 require(royaltySuccess, "PasifikaMarketplace: royalty transfer failed");
 
                 emit RoyaltyPaid(listing.tokenId, receiver, royaltyAmount);
@@ -491,7 +491,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
         // Send total fee to treasury
         if (totalFee > 0) {
             // Use the depositFees function in the treasury
-            (bool treasurySuccess,) = address(treasury).call{value: totalFee}(
+            (bool treasurySuccess,) = address(treasury).call{ value: totalFee }(
                 abi.encodeWithSignature(
                     "depositFees(string)",
                     string(abi.encodePacked("Marketplace fee from NFT sale #", _toString(listing.tokenId)))
@@ -502,7 +502,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
 
         // Refund excess payment
         if (msg.value > finalPrice) {
-            (bool refundSuccess,) = payable(msg.sender).call{value: msg.value - finalPrice}("");
+            (bool refundSuccess,) = payable(msg.sender).call{ value: msg.value - finalPrice }("");
             require(refundSuccess, "PasifikaMarketplace: refund failed");
         }
 
@@ -528,7 +528,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
         pendingWithdrawals[listingId][listing.seller] = 0;
 
         // Transfer funds to seller
-        (bool success,) = payable(listing.seller).call{value: amount}("");
+        (bool success,) = payable(listing.seller).call{ value: amount }("");
         require(success, "PasifikaMarketplace: transfer from escrow failed");
 
         emit EscrowReleased(listingId, listing.seller, amount);
@@ -569,7 +569,7 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
         pendingWithdrawals[listingId][msg.sender] = 0;
 
         // Transfer funds
-        (bool success,) = payable(msg.sender).call{value: amount}("");
+        (bool success,) = payable(msg.sender).call{ value: amount }("");
         require(success, "PasifikaMarketplace: withdrawal failed");
     }
 
@@ -756,5 +756,5 @@ contract PasifikaMarketplace is AccessControl, ReentrancyGuard, Pausable {
     /**
      * @dev Allow receiving ETH
      */
-    receive() external payable {}
+    receive() external payable { }
 }

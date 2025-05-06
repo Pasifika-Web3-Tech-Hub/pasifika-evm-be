@@ -68,7 +68,7 @@ contract ProfitSharingTest is Test {
         treasury.addFeeCollector(address(membership));
 
         // Fund treasury
-        treasury.depositFunds{value: initialTreasuryAmount}("Initial funding");
+        treasury.depositFunds{ value: initialTreasuryAmount }("Initial funding");
 
         // Add members
         membership.grantMembership(member1);
@@ -219,7 +219,7 @@ contract ProfitSharingTest is Test {
         newMembership.grantRole(newMembership.PROFIT_SHARING_MANAGER_ROLE(), deployer);
 
         // Fund treasury
-        newTreasury.depositFunds{value: 5 ether}("Test funding");
+        newTreasury.depositFunds{ value: 5 ether }("Test funding");
 
         // Add three members to prevent auto-finalization
         newMembership.grantMembership(member1);

@@ -77,7 +77,7 @@ contract PasifikaMembershipTest is Test {
         moneyTransfer.setMembershipContract(payable(address(membership)));
 
         // Fund treasury with ETH for profit sharing tests
-        treasury.depositFunds{value: 10 ether}("Initial funding");
+        treasury.depositFunds{ value: 10 ether }("Initial funding");
 
         vm.stopPrank();
     }
@@ -88,7 +88,7 @@ contract PasifikaMembershipTest is Test {
 
         // Join membership
         vm.prank(member1);
-        membership.joinMembership{value: membershipFee}();
+        membership.joinMembership{ value: membershipFee }();
 
         // Verify
         assertTrue(membership.isMember(member1), "Member1 should be registered as a member");

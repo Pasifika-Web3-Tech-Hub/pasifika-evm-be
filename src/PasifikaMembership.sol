@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./PasifikaTreasury.sol";
-import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import "forge-std/console.sol"; // Foundry console for logging
 
 /**
@@ -96,16 +96,12 @@ contract PasifikaMembership is AccessControl, ReentrancyGuard, Pausable {
 
         // Create membership
         isMember[msg.sender] = true;
-        memberInfo[msg.sender] = MemberInfo({
-            user: msg.sender,
-            joinedTimestamp: block.timestamp,
-            active: true
-        });
+        memberInfo[msg.sender] = MemberInfo({ user: msg.sender, joinedTimestamp: block.timestamp, active: true });
         members.push(msg.sender);
 
         // Send fee to treasury
         if (msg.value > 0) {
-            (bool success,) = payable(address(treasury)).call{value: msg.value}(
+            (bool success,) = payable(address(treasury)).call{ value: msg.value }(
                 abi.encodeWithSignature("depositFees(string)", "Membership fee")
             );
             require(success, "PasifikaMembership: fee transfer failed");
@@ -124,11 +120,7 @@ contract PasifikaMembership is AccessControl, ReentrancyGuard, Pausable {
 
         // Create membership
         isMember[user] = true;
-        memberInfo[user] = MemberInfo({
-            user: user,
-            joinedTimestamp: block.timestamp,
-            active: true
-        });
+        memberInfo[user] = MemberInfo({ user: user, joinedTimestamp: block.timestamp, active: true });
         members.push(user);
 
         emit MembershipCreated(user, 0, block.timestamp);
@@ -154,9 +146,7 @@ contract PasifikaMembership is AccessControl, ReentrancyGuard, Pausable {
      */
     function restoreMembership(address user) external onlyRole(MEMBERSHIP_MANAGER_ROLE) {
         require(user != address(0), "PasifikaMembership: zero address");
-        require(
-            isMember[user] && !memberInfo[user].active, "PasifikaMembership: not a revoked member"
-        );
+        require(isMember[user] && !memberInfo[user].active, "PasifikaMembership: not a revoked member");
 
         // Reactivate membership
         memberInfo[user].active = true;
@@ -227,7 +217,7 @@ contract PasifikaMembership is AccessControl, ReentrancyGuard, Pausable {
     function recordTransaction(address member, uint256 amount) external {
         if (isMember[member] && memberInfo[member].active) {
             uint256 year = block.timestamp / 31536000 + 1970; // Approximate year calculation
-            
+
             // Record transaction
             yearlyTransactionCount[member][year]++;
             yearlyTransactionVolume[member][year] += amount;
@@ -256,24 +246,19 @@ contract PasifikaMembership is AccessControl, ReentrancyGuard, Pausable {
     function claimProfitShare() external nonReentrant {
         require(isMember[msg.sender], "PasifikaMembership: not a member");
         require(profitSharingInProgress, "PasifikaMembership: no profit sharing in progress");
-        require(
-            !hasClaimed[msg.sender][currentProfitSharingYear], "PasifikaMembership: already claimed"
-        );
+        require(!hasClaimed[msg.sender][currentProfitSharingYear], "PasifikaMembership: already claimed");
 
         // Previous year's activity determines eligibility
         uint256 previousYear = currentProfitSharingYear - 1;
-        
+
         // Check eligibility
-        require(
-            isEligibleForProfitSharing(msg.sender, previousYear),
-            "PasifikaMembership: not eligible"
-        );
+        require(isEligibleForProfitSharing(msg.sender, previousYear), "PasifikaMembership: not eligible");
 
         // Mark as claimed
         hasClaimed[msg.sender][currentProfitSharingYear] = true;
 
         // Transfer the share to the member
-        (bool success,) = payable(msg.sender).call{value: currentSharePerMember}("");
+        (bool success,) = payable(msg.sender).call{ value: currentSharePerMember }("");
         require(success, "PasifikaMembership: share transfer failed");
 
         emit ProfitSharingClaimed(msg.sender, currentProfitSharingYear, currentSharePerMember, block.timestamp);
@@ -380,7 +365,7 @@ contract PasifikaMembership is AccessControl, ReentrancyGuard, Pausable {
         // Transfer any remaining ETH back to treasury
         uint256 remainingBalance = address(this).balance;
         if (remainingBalance > 0) {
-            (bool success,) = payable(address(treasury)).call{value: remainingBalance}(
+            (bool success,) = payable(address(treasury)).call{ value: remainingBalance }(
                 abi.encodeWithSignature(
                     "depositFunds(bytes32,string)", keccak256("UNALLOCATED"), "Profit sharing remainder"
                 )
@@ -467,7 +452,7 @@ contract PasifikaMembership is AccessControl, ReentrancyGuard, Pausable {
         }
 
         // Forward to treasury
-        (bool success,) = payable(address(treasury)).call{value: msg.value}(
+        (bool success,) = payable(address(treasury)).call{ value: msg.value }(
             abi.encodeWithSignature("depositFees(string)", "Direct membership payment")
         );
         require(success, "PasifikaMembership: transfer failed");

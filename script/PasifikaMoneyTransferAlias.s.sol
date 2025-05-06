@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Script} from "forge-std/Script.sol";
-import {console} from "forge-std/console.sol";
-import {PasifikaMoneyTransfer} from "../src/PasifikaMoneyTransfer.sol";
-import {ArbitrumTokenAdapter} from "../src/ArbitrumTokenAdapter.sol";
-import {PasifikaArbitrumNode} from "../src/PasifikaArbitrumNode.sol";
-import {PasifikaTreasury} from "../src/PasifikaTreasury.sol";
-import {PasifikaMembership} from "../src/PasifikaMembership.sol";
+import { Script } from "forge-std/Script.sol";
+import { console } from "forge-std/console.sol";
+import { PasifikaMoneyTransfer } from "../src/PasifikaMoneyTransfer.sol";
+import { ArbitrumTokenAdapter } from "../src/ArbitrumTokenAdapter.sol";
+import { PasifikaArbitrumNode } from "../src/PasifikaArbitrumNode.sol";
+import { PasifikaTreasury } from "../src/PasifikaTreasury.sol";
+import { PasifikaMembership } from "../src/PasifikaMembership.sol";
 
 /**
  * @title PasifikaMoneyTransferAliasScript
@@ -24,9 +24,9 @@ contract PasifikaMoneyTransferAliasScript is Script {
         // Using wallet alias from the keystore instead of private key
         address payable deployer = payable(msg.sender);
         address payable treasuryWallet;
-        
+
         console.log("Deployer address:", deployer);
-        
+
         try vm.envAddress("TREASURY_WALLET") returns (address addr) {
             treasuryWallet = payable(addr);
             console.log("Treasury wallet:", treasuryWallet);
@@ -35,7 +35,7 @@ contract PasifikaMoneyTransferAliasScript is Script {
             treasuryWallet = deployer;
             console.log("Treasury wallet not set, using deployer address:", treasuryWallet);
         }
-        
+
         console.log("Starting PasifikaMoneyTransfer deployment on Arbitrum...");
 
         // Get ArbitrumTokenAdapter address if deployed
@@ -91,7 +91,7 @@ contract PasifikaMoneyTransferAliasScript is Script {
         console.log("4. Set membership and node contracts using setMembershipContract and setNodeContract");
 
         // Skip remaining integration steps as they could cause access control issues
-        
+
         console.log("PasifikaMoneyTransfer deployment completed successfully");
         console.log("Further setup required by admin with proper permissions");
 

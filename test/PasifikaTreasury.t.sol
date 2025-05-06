@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Test, console} from "forge-std/Test.sol";
-import {PasifikaTreasury} from "../src/PasifikaTreasury.sol";
+import { Test, console } from "forge-std/Test.sol";
+import { PasifikaTreasury } from "../src/PasifikaTreasury.sol";
 
 contract PasifikaTreasuryTest is Test {
     PasifikaTreasury public treasury;
@@ -43,7 +43,7 @@ contract PasifikaTreasuryTest is Test {
         // Deposit fees
         uint256 treasuryBalanceBefore = address(treasury).balance;
         (bool success,) =
-            address(treasury).call{value: depositAmount}(abi.encodeWithSignature("depositFees(string)", reason));
+            address(treasury).call{ value: depositAmount }(abi.encodeWithSignature("depositFees(string)", reason));
         assertTrue(success);
         uint256 treasuryBalanceAfter = address(treasury).balance;
 
@@ -61,7 +61,7 @@ contract PasifikaTreasuryTest is Test {
 
         // Deposit directly
         uint256 treasuryBalanceBefore = address(treasury).balance;
-        treasury.depositFunds{value: depositAmount}(reason);
+        treasury.depositFunds{ value: depositAmount }(reason);
         uint256 treasuryBalanceAfter = address(treasury).balance;
 
         // Verify treasury received the deposit
@@ -78,7 +78,7 @@ contract PasifikaTreasuryTest is Test {
 
         // Try to deposit as non-fee collector
         (bool success, bytes memory data) =
-            address(treasury).call{value: depositAmount}(abi.encodeWithSignature("depositFees(string)", reason));
+            address(treasury).call{ value: depositAmount }(abi.encodeWithSignature("depositFees(string)", reason));
 
         // It should fail with a revert message
         assertFalse(success);
@@ -115,7 +115,7 @@ contract PasifikaTreasuryTest is Test {
 
         // First add funds to the contract
         vm.deal(admin, depositAmount);
-        treasury.depositFunds{value: depositAmount}("Initial treasury funds");
+        treasury.depositFunds{ value: depositAmount }("Initial treasury funds");
 
         // Withdraw from marketing fund
         uint256 withdrawAmount = 1 ether;

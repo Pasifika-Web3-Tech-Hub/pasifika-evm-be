@@ -50,7 +50,7 @@ contract PasifikaMoneyTransferTest is Test {
         treasury.grantRole(treasury.SPENDER_ROLE(), deployer);
 
         // Fund treasury with ETH
-        treasury.depositFunds{value: treasuryInitialBalance}("Initial treasury funding");
+        treasury.depositFunds{ value: treasuryInitialBalance }("Initial treasury funding");
 
         // Deploy membership and grant necessary roles
         membership = new PasifikaMembership(payable(address(treasury)));
@@ -98,7 +98,7 @@ contract PasifikaMoneyTransferTest is Test {
 
         // Execute transfer
         vm.startPrank(deployer);
-        uint256 txId = moneyTransfer.transfer{value: transferAmount}(recipient, transferAmount, "Test transfer");
+        uint256 txId = moneyTransfer.transfer{ value: transferAmount }(recipient, transferAmount, "Test transfer");
         vm.stopPrank();
 
         // Validate - don't check status as transaction completes immediately
@@ -142,7 +142,7 @@ contract PasifikaMoneyTransferTest is Test {
 
         // Execute transfer with member discount
         vm.startPrank(deployer);
-        moneyTransfer.transfer{value: transferAmount}(recipient, transferAmount, "Member transfer");
+        moneyTransfer.transfer{ value: transferAmount }(recipient, transferAmount, "Member transfer");
         vm.stopPrank();
 
         // Calculate expected fee (0.25% for tier 2 node operators - 75% discount)
@@ -167,7 +167,7 @@ contract PasifikaMoneyTransferTest is Test {
 
         // Execute transfer
         vm.startPrank(deployer);
-        moneyTransfer.transfer{value: transferAmount}(recipient, transferAmount, "Test fee distribution");
+        moneyTransfer.transfer{ value: transferAmount }(recipient, transferAmount, "Test fee distribution");
         vm.stopPrank();
 
         // Calculate expected fee

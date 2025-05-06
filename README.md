@@ -8,6 +8,20 @@
   <p><strong>"If we take care of our own, they will take care of us"</strong></p>
 </div>
 
+## Latest Updates (May 2025)
+
+ **Successfully deployed to Arbitrum Sepolia testnet!**
+
+| Contract | Address |
+|----------|---------|
+| ArbitrumTokenAdapter | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
+| PasifikaArbitrumNode | 0xc79C57a047AD9B45B70D85000e9412C61f8fE336 |
+| PasifikaTreasury | 0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4 |
+| PasifikaMembership | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
+| PasifikaMoneyTransfer | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
+
+All contract addresses and ABIs are saved in the frontend directory for easy integration.
+
 ## Overview
 
 The Pasifika backend is a decentralized physical infrastructure network (DePIN) designed for Pacific Island communities. This implementation leverages Arbitrum's Layer-2 scaling solution to create a sustainable economic ecosystem for Pacific Islanders.
@@ -113,7 +127,7 @@ Our membership system is designed to provide clear benefits to platform particip
 
 ### Deployment Process
 
-The deployment process is streamlined with Foundry's powerful toolkit:
+The deployment process is streamlined with our comprehensive deployment script and Foundry's powerful toolkit:
 
 1. **Setup**:
    ```bash
@@ -126,11 +140,37 @@ The deployment process is streamlined with Foundry's powerful toolkit:
    ```
 
 3. **Deployment to Arbitrum Network**:
+
+   Our new deployment script supports flexible deployment options:
+
    ```bash
-   $ ./deploy/arbitrum-deploy.sh
+   # Deploy all contracts in the correct order
+   $ ./deploy/arbitrum-deploy.sh all
+
+   # Deploy individual contracts as needed
+   $ ./deploy/arbitrum-deploy.sh treasury
+   $ ./deploy/arbitrum-deploy.sh membership
+   $ ./deploy/arbitrum-deploy.sh money-transfer
    ```
 
-For testnet deployments, use the `.env.testnet` configuration file.
+4. **Configuration**:
+   
+   The deployment script:
+   - Saves all contract addresses to individual JSON files in the frontend directory
+   - Updates environment variables automatically
+   - Creates comprehensive deployment logs
+
+For testnet deployments, we use the `.env.testnet` configuration file with Foundry's keystore for secure wallet management.
+
+### Post-Deployment Configuration
+
+After deployment, the admin must perform the following steps to complete the integration:
+
+1. Add PasifikaMembership as a fee collector in PasifikaTreasury
+2. Add PasifikaMoneyTransfer as a fee collector in PasifikaTreasury
+3. Initialize the Treasury connection in PasifikaMoneyTransfer
+4. Set appropriate fee percentages
+5. Connect contracts together by setting references
 
 ## Security and Transparency
 
@@ -140,6 +180,7 @@ Our contracts implement best practices for security:
 - Multi-signature requirements for treasury operations
 - Role-based access control for administrative functions
 - Fee collection mechanisms with transparent allocation
+- Secure keystore management for deployments
 
 ## License
 
