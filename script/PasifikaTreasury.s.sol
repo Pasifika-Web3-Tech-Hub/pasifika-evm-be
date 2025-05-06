@@ -16,20 +16,33 @@ contract PasifikaTreasuryScript is Script {
     PasifikaTreasury public treasury;
 
     function run() public {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
+        // Using the Foundry wallet directly instead of private key from env
+        vm.startBroadcast();
 
-        // Deploy the treasury contract
-        treasury = new PasifikaTreasury(msg.sender);
+        // Explicitly use the pasifika-account address as the admin
+        address pasifikaAccount = 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8;
+        console.log("Deploying with pasifika-account address:", pasifikaAccount);
+
+        // Deploy the treasury contract with the pasifika-account as admin
+        treasury = new PasifikaTreasury(pasifikaAccount);
+        console.log("Treasury deployed with admin:", pasifikaAccount);
 
         // Check if Marketplace is already deployed
         address payable marketplaceAddress;
         try vm.envAddress("PASIFIKA_MARKETPLACE_ADDRESS") returns (address addr) {
             marketplaceAddress = payable(addr);
-            console.log("Registering existing marketplace at:", marketplaceAddress);
-            // Register marketplace as fee collector
-            treasury.addFeeCollector(marketplaceAddress);
-            PasifikaMarketplace(marketplaceAddress).initializeTreasury();
+            if (marketplaceAddress != address(treasury)) {
+                console.log("Registering existing marketplace at:", marketplaceAddress);
+                // Register marketplace as fee collector
+                treasury.addFeeCollector(marketplaceAddress);
+                try PasifikaMarketplace(marketplaceAddress).initializeTreasury() {
+                    console.log("Marketplace initialized with treasury");
+                } catch {
+                    console.log("Failed to initialize marketplace with treasury");
+                }
+            } else {
+                console.log("Skipping marketplace registration (same as treasury address)");
+            }
         } catch {
             console.log("No marketplace found to register as fee collector");
         }
@@ -38,10 +51,18 @@ contract PasifikaTreasuryScript is Script {
         address payable moneyTransferAddress;
         try vm.envAddress("PASIFIKA_MONEY_TRANSFER_ADDRESS") returns (address addr) {
             moneyTransferAddress = payable(addr);
-            console.log("Registering existing money transfer at:", moneyTransferAddress);
-            // Register money transfer as fee collector
-            treasury.addFeeCollector(moneyTransferAddress);
-            PasifikaMoneyTransfer(moneyTransferAddress).initializeTreasury();
+            if (moneyTransferAddress != address(treasury)) {
+                console.log("Registering existing money transfer at:", moneyTransferAddress);
+                // Register money transfer as fee collector
+                treasury.addFeeCollector(moneyTransferAddress);
+                try PasifikaMoneyTransfer(moneyTransferAddress).initializeTreasury() {
+                    console.log("Money transfer initialized with treasury");
+                } catch {
+                    console.log("Failed to initialize money transfer with treasury");
+                }
+            } else {
+                console.log("Skipping money transfer registration (same as treasury address)");
+            }
         } catch {
             console.log("No money transfer found to register as fee collector");
         }

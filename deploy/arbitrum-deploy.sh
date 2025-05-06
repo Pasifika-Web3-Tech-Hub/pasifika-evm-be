@@ -156,12 +156,21 @@ EOF
 
     echo "✅ Created ${contract_name} address file: $FE_DIR/${contract_name}.json"
     
-    # Copy the ABI file if it exists
+    # Try various potential paths to find the ABI file
     if [ -f "out/${script_name}.sol/${contract_name}.json" ]; then
         cp "out/${script_name}.sol/${contract_name}.json" "$FE_DIR/${contract_name}_ABI.json"
         echo "✅ Copied ${contract_name} ABI to: $FE_DIR/${contract_name}_ABI.json"
+    elif [ -f "out/${contract_name}.sol/${contract_name}.json" ]; then
+        cp "out/${contract_name}.sol/${contract_name}.json" "$FE_DIR/${contract_name}_ABI.json"
+        echo "✅ Copied ${contract_name} ABI to: $FE_DIR/${contract_name}_ABI.json"
+    elif [ -f "out/${script_name}/${contract_name}.json" ]; then
+        cp "out/${script_name}/${contract_name}.json" "$FE_DIR/${contract_name}_ABI.json"
+        echo "✅ Copied ${contract_name} ABI to: $FE_DIR/${contract_name}_ABI.json"
     else
-        echo "Warning: ABI file not found for ${contract_name} (out/${script_name}.sol/${contract_name}.json)"
+        echo "Warning: ABI file not found for ${contract_name}. Tried paths:"
+        echo "- out/${script_name}.sol/${contract_name}.json"
+        echo "- out/${contract_name}.sol/${contract_name}.json"
+        echo "- out/${script_name}/${contract_name}.json"
     fi
 }
 
@@ -401,7 +410,7 @@ deploy_all() {
         if [ ! -z "$treasury_address" ]; then
             update_env_var "ARBITRUM_TREASURY_ADDRESS" "$treasury_address"
             update_env_var "PASIFIKA_TREASURY_ADDRESS" "$treasury_address"
-            save_contract_json "PasifikaTreasury" "$treasury_address" "ArbitrumDeployment"
+            save_contract_json "PasifikaTreasury" "$treasury_address" "PasifikaTreasury"
             export ARBITRUM_TREASURY_ADDRESS=$treasury_address
             export PASIFIKA_TREASURY_ADDRESS=$treasury_address
         fi
@@ -409,7 +418,7 @@ deploy_all() {
         if [ ! -z "$membership_address" ]; then
             update_env_var "ARBITRUM_MEMBERSHIP_ADDRESS" "$membership_address"
             update_env_var "PASIFIKA_MEMBERSHIP_ADDRESS" "$membership_address"
-            save_contract_json "PasifikaMembership" "$membership_address" "ArbitrumDeployment"
+            save_contract_json "PasifikaMembership" "$membership_address" "PasifikaMembership"
             export ARBITRUM_MEMBERSHIP_ADDRESS=$membership_address
             export PASIFIKA_MEMBERSHIP_ADDRESS=$membership_address
         fi
@@ -417,7 +426,7 @@ deploy_all() {
         if [ ! -z "$money_transfer_address" ]; then
             update_env_var "ARBITRUM_MONEY_TRANSFER_ADDRESS" "$money_transfer_address"
             update_env_var "PASIFIKA_MONEY_TRANSFER_ADDRESS" "$money_transfer_address"
-            save_contract_json "PasifikaMoneyTransfer" "$money_transfer_address" "ArbitrumDeployment"
+            save_contract_json "PasifikaMoneyTransfer" "$money_transfer_address" "PasifikaMoneyTransfer"
             export ARBITRUM_MONEY_TRANSFER_ADDRESS=$money_transfer_address
             export PASIFIKA_MONEY_TRANSFER_ADDRESS=$money_transfer_address
         fi

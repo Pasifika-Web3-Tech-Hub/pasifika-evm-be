@@ -1,0 +1,38 @@
+Pasifika Arbitrum Deployment Log - Tue May  6 08:38:04 PM +13 2025
+Network: Arbitrum Sepolia (Chain ID: 421614)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 2.79s
+Compiler run successful!
+Traces:
+  [5822214] → new PasifikaTreasuryScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 28965 bytes of code
+
+  [2769072] PasifikaTreasuryScript::run()
+    ├─ [0] VM::startBroadcast()
+    │   └─ ← [Return] 
+    ├─ [2717628] → new PasifikaTreasury@0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+    │   ├─ emit RoleGranted(role: 0x0000000000000000000000000000000000000000000000000000000000000000, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0x3496e2e73c4d42b75d702e60d9e48102720b8691234415963a5a857b86425d07, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0x7434c6f201a551bfd17336985361933e0c4935b520dac8a49d937b325f7d5c0a, account: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit FundCreated(fundName: 0xc263d9d588e3f4a23b460febdbeb7d07a28cdddcdda5f2ea8b5f8c83f73616eb, name: "Unallocated", allocation: 10000 [1e4])
+    │   └─ ← [Return] 12391 bytes of code
+    ├─ [0] VM::envAddress("PASIFIKA_MARKETPLACE_ADDRESS") [staticcall]
+    │   └─ ← [Revert] vm.envAddress: environment variable "PASIFIKA_MARKETPLACE_ADDRESS" not found
+    ├─ [0] console::log("No marketplace found to register as fee collector") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::envAddress("PASIFIKA_MONEY_TRANSFER_ADDRESS") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Registering existing money transfer at:", PasifikaTreasury: [0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [2868] PasifikaTreasury::addFeeCollector(PasifikaTreasury: [0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517])
+    │   └─ ← [Revert] AccessControlUnauthorizedAccount(0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775)
+    └─ ← [Revert] AccessControlUnauthorizedAccount(0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775)
+
+
+
+== Logs ==
+  No marketplace found to register as fee collector
+  Registering existing money transfer at: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
