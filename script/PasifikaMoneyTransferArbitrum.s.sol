@@ -33,7 +33,7 @@ contract PasifikaMoneyTransferArbitrumScript is Script {
                 console.log("No admin address found. Using deployer address:", admin);
             }
         }
-        
+
         // Get treasury wallet from environment
         address payable treasuryWallet = payable(vm.envAddress("TREASURY_WALLET"));
 
@@ -69,19 +69,15 @@ contract PasifikaMoneyTransferArbitrumScript is Script {
         // Deploy PasifikaMoneyTransfer
         console.log("Deploying PasifikaMoneyTransfer...");
         vm.broadcast();
-        moneyTransfer = new PasifikaMoneyTransfer(
-            arbitrumTokenAdapterAddress,
-            treasuryWallet,
-            treasuryAddress
-        );
-        
+        moneyTransfer = new PasifikaMoneyTransfer(arbitrumTokenAdapterAddress, treasuryWallet, treasuryAddress);
+
         console.log("PasifikaMoneyTransfer deployed at:", address(moneyTransfer));
 
         // Add money transfer as fee collector to treasury
         console.log("Adding MoneyTransfer as fee collector to Treasury...");
         vm.broadcast();
         treasury.addFeeCollector(address(moneyTransfer));
-        
+
         // Initialize treasury integration
         console.log("Initializing treasury integration...");
         vm.broadcast();
@@ -108,7 +104,7 @@ contract PasifikaMoneyTransferArbitrumScript is Script {
             membershipAddress = payable(addr);
             membership = PasifikaMembership(membershipAddress);
             console.log("Using existing PasifikaMembership at:", membershipAddress);
-            
+
             // Set membership contract
             console.log("Setting membership contract...");
             vm.broadcast();
@@ -118,7 +114,7 @@ contract PasifikaMoneyTransferArbitrumScript is Script {
                 membershipAddress = payable(addr);
                 membership = PasifikaMembership(membershipAddress);
                 console.log("Using existing PasifikaMembership at:", membershipAddress);
-                
+
                 // Set membership contract
                 console.log("Setting membership contract...");
                 vm.broadcast();

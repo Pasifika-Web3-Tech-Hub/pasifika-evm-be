@@ -26,7 +26,7 @@ contract PasifikaMoneyTransferLineaScript is Script {
         } catch {
             // Using msg.sender as admin
         }
-        
+
         // Get treasury wallet from environment
         address payable treasuryWallet = payable(vm.envAddress("TREASURY_WALLET"));
 
@@ -62,19 +62,15 @@ contract PasifikaMoneyTransferLineaScript is Script {
         // Deploy PasifikaMoneyTransfer
         console.log("Deploying PasifikaMoneyTransfer...");
         vm.broadcast();
-        moneyTransfer = new PasifikaMoneyTransfer(
-            lineaTokenAdapterAddress,
-            treasuryWallet,
-            treasuryAddress
-        );
-        
+        moneyTransfer = new PasifikaMoneyTransfer(lineaTokenAdapterAddress, treasuryWallet, treasuryAddress);
+
         console.log("PasifikaMoneyTransfer deployed at:", address(moneyTransfer));
 
         // Add money transfer as fee collector to treasury
         console.log("Adding MoneyTransfer as fee collector to Treasury...");
         vm.broadcast();
         treasury.addFeeCollector(address(moneyTransfer));
-        
+
         // Initialize treasury integration
         console.log("Initializing treasury integration...");
         vm.broadcast();
@@ -101,7 +97,7 @@ contract PasifikaMoneyTransferLineaScript is Script {
             membershipAddress = payable(addr);
             membership = PasifikaMembership(membershipAddress);
             console.log("Using existing PasifikaMembership at:", membershipAddress);
-            
+
             // Set membership contract
             console.log("Setting membership contract...");
             vm.broadcast();
@@ -111,7 +107,7 @@ contract PasifikaMoneyTransferLineaScript is Script {
                 membershipAddress = payable(addr);
                 membership = PasifikaMembership(membershipAddress);
                 console.log("Using existing PasifikaMembership at:", membershipAddress);
-                
+
                 // Set membership contract
                 console.log("Setting membership contract...");
                 vm.broadcast();

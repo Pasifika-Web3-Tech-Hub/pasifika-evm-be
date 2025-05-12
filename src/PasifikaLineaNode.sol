@@ -17,7 +17,7 @@ contract PasifikaLineaNode is AccessControl, Pausable {
     mapping(address => bool) public activeNodes;
     mapping(address => uint256) public nodeStakes;
     uint256 public totalNodes;
-    
+
     // Linea-specific settings - lower gas costs on Linea can allow for more operations
     uint256 public nodeOperationFee;
     bool public autoCompounding;
@@ -138,7 +138,7 @@ contract PasifikaLineaNode is AccessControl, Pausable {
     function isActiveNodeOperator(address operator) external view returns (bool) {
         return activeNodes[operator] && hasRole(NODE_OPERATOR_ROLE, operator);
     }
-    
+
     /**
      * @dev Get the total stake of all active nodes
      * @return Total stake amount in ETH
@@ -146,7 +146,7 @@ contract PasifikaLineaNode is AccessControl, Pausable {
     function getTotalStake() external view returns (uint256) {
         return address(this).balance;
     }
-    
+
     /**
      * @dev Get the fee tier for a specific address (optimized for Linea's low gas costs)
      * @param userAddress Address to check

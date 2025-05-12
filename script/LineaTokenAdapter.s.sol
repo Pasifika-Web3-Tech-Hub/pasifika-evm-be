@@ -22,11 +22,11 @@ contract LineaTokenAdapterScript is Script {
         }
 
         console.log("Deploying LineaTokenAdapter with account:", admin);
-        
+
         // Deploy LineaTokenAdapter
         vm.broadcast();
         adapter = new LineaTokenAdapter();
-        
+
         // Add a mock USDC token for testing purposes (this would be configured in production)
         address mockUSDC = 0x1234567890123456789012345678901234567890; // Example address
         try vm.envAddress("LINEA_USDC_ADDRESS") returns (address addr) {
@@ -34,14 +34,14 @@ contract LineaTokenAdapterScript is Script {
         } catch {
             // Using default mock address
         }
-        
+
         vm.broadcast();
         adapter.addToken(mockUSDC, "USDC");
-        
+
         // Also add support for native ETH (address(0))
         vm.broadcast();
         adapter.addToken(address(0), "ETH");
-        
+
         console.log("LineaTokenAdapter deployed at:", address(adapter));
     }
 }

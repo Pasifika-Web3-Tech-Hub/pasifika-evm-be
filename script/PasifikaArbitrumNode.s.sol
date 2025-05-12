@@ -44,7 +44,7 @@ contract PasifikaArbitrumNodeScript is Script {
         try vm.envAddress("INITIAL_NODE_OPERATOR") returns (address initialOperator) {
             try vm.envUint("INITIAL_NODE_STAKE") returns (uint256 initialStake) {
                 if (initialStake > 0 && address(this).balance >= initialStake) {
-                    arbitrumNode.registerNode{value: initialStake}(initialOperator);
+                    arbitrumNode.registerNode{ value: initialStake }(initialOperator);
                     console.log("Registered initial node operator:", initialOperator);
                     console.log("Initial stake:", initialStake);
                 }

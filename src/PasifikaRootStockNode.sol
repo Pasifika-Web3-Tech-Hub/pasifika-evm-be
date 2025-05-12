@@ -18,7 +18,7 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
     mapping(address => bool) public activeNodes;
     mapping(address => uint256) public nodeStakes;
     uint256 public totalNodes;
-    
+
     // RootStock-specific settings
     address public rifToken;
     bool public acceptRifStaking;
@@ -41,7 +41,7 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(ADMIN_ROLE, admin);
         _grantRole(TREASURY_ROLE, admin);
-        
+
         rifToken = _rifToken;
         minimumStake = 0.0001 ether; // 0.0001 RBTC as mentioned in project specs
         acceptRifStaking = true;
@@ -74,14 +74,11 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
         require(acceptRifStaking, "RIF staking not enabled");
         require(!activeNodes[operator], "Node already registered");
         require(rifAmount > 0, "RIF amount must be greater than 0");
-        
+
         // Transfer RIF tokens from sender to this contract
-        (bool success, ) = rifToken.call(
+        (bool success,) = rifToken.call(
             abi.encodeWithSelector(
-                bytes4(keccak256("transferFrom(address,address,uint256)")),
-                msg.sender,
-                address(this),
-                rifAmount
+                bytes4(keccak256("transferFrom(address,address,uint256)")), msg.sender, address(this), rifAmount
             )
         );
         require(success, "RIF transfer failed");
@@ -112,8 +109,10 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
      * @param operator Address of the node operator to reactivate
      */
     function reactivateNode(address operator) external onlyRole(ADMIN_ROLE) whenNotPaused {
-        require(!activeNodes[operator] && (nodeStakes[operator] > 0 || rifStakes[operator] > 0), 
-                "Node not properly registered");
+        require(
+            !activeNodes[operator] && (nodeStakes[operator] > 0 || rifStakes[operator] > 0),
+            "Node not properly registered"
+        );
 
         activeNodes[operator] = true;
         _grantRole(NODE_OPERATOR_ROLE, operator);
@@ -165,22 +164,21 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
     function executeProfitSharing() external onlyRole(TREASURY_ROLE) {
         // Ensure at least 11 months have passed since last distribution
         // (Pasifika Financial Year: December 27 to December 24)
-        require(block.timestamp >= lastProfitSharingTimestamp + 11 * 30 days, 
-                "Too soon for profit sharing");
+        require(block.timestamp >= lastProfitSharingTimestamp + 11 * 30 days, "Too soon for profit sharing");
         require(totalNodes > 0, "No nodes registered");
-        
+
         uint256 contractBalance = address(this).balance;
         uint256 profitAmount = (contractBalance * profitSharingPercentage) / 100;
         uint256 sharePerNode = profitAmount / totalNodes;
-        
+
         require(sharePerNode > 0, "Share per node too small");
-        
-        for (uint i = 0; i < totalNodes; i++) {
-            // This is a simplified implementation - a production version would 
+
+        for (uint256 i = 0; i < totalNodes; i++) {
+            // This is a simplified implementation - a production version would
             // use an array or more gas-efficient approach to track node operators
             // and would include security considerations
         }
-        
+
         lastProfitSharingTimestamp = block.timestamp;
         emit ProfitSharingExecuted(profitAmount, totalNodes);
     }
@@ -219,14 +217,11 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
         require(acceptRifStaking, "RIF staking not enabled");
         require(nodeStakes[operator] > 0 || rifStakes[operator] > 0, "Node not registered");
         require(rifAmount > 0, "RIF amount must be greater than 0");
-        
+
         // Transfer RIF tokens from sender to this contract
-        (bool success, ) = rifToken.call(
+        (bool success,) = rifToken.call(
             abi.encodeWithSelector(
-                bytes4(keccak256("transferFrom(address,address,uint256)")),
-                msg.sender,
-                address(this),
-                rifAmount
+                bytes4(keccak256("transferFrom(address,address,uint256)")), msg.sender, address(this), rifAmount
             )
         );
         require(success, "RIF transfer failed");
@@ -243,7 +238,7 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
     function isActiveNodeOperator(address operator) external view returns (bool) {
         return activeNodes[operator] && hasRole(NODE_OPERATOR_ROLE, operator);
     }
-    
+
     /**
      * @dev Get the total RBTC stake of all active nodes
      * @return Total stake amount in RBTC
@@ -251,7 +246,7 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
     function getTotalRbtcStake() external view returns (uint256) {
         return address(this).balance;
     }
-    
+
     /**
      * @dev Get the fee tier for a specific address
      * @param userAddress Address to check
@@ -265,9 +260,9 @@ contract PasifikaRootStockNode is AccessControl, Pausable {
         // The membership status would be checked in a separate contract
         return 100; // 1% default fee
     }
-    
+
     /**
      * @dev Allows the contract to receive RBTC
      */
-    receive() external payable {}
+    receive() external payable { }
 }

@@ -38,7 +38,7 @@ contract PasifikaLineaNodeScript is Script {
         try vm.envAddress("INITIAL_NODE_OPERATOR") returns (address initialOperator) {
             try vm.envUint("INITIAL_NODE_STAKE") returns (uint256 initialStake) {
                 if (initialStake > 0 && address(this).balance >= initialStake) {
-                    lineaNode.registerNode{value: initialStake}(initialOperator);
+                    lineaNode.registerNode{ value: initialStake }(initialOperator);
                     console.log("Registered initial node operator:", initialOperator);
                     console.log("Initial stake:", initialStake);
                 }

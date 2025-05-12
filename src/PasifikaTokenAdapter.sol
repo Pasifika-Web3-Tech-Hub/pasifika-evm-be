@@ -15,17 +15,15 @@ interface PasifikaTokenAdapter {
      * @param amount Amount of tokens to transfer
      * @return success Whether the transfer was successful
      */
-    function transferToken(address token, address recipient, uint256 amount) 
-        external 
-        returns (bool success);
-    
+    function transferToken(address token, address recipient, uint256 amount) external returns (bool success);
+
     /**
      * @dev Checks if a token is supported
      * @param token Address of the token to check
      * @return Whether the token is supported
      */
     function isTokenSupported(address token) external view returns (bool);
-    
+
     /**
      * @dev Gets the symbol of a token
      * @param token Address of the token
