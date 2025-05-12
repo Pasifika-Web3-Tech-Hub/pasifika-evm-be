@@ -1,0 +1,34 @@
+Pasifika Arbitrum Deployment Log - Tue May  6 08:48:57 PM +13 2025
+Network: Arbitrum Sepolia (Chain ID: 421614)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+No files changed, compilation skipped
+Script ran successfully.
+
+== Logs ==
+  Deploying with pasifika-account address: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8
+  Treasury deployed with admin: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8
+  No marketplace found to register as fee collector
+  Skipping money transfer registration (same as treasury address)
+  Using existing PasifikaMembership at: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+  Treasury setup completed with default funds
+  PasifikaTreasury deployed at: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 421614
+
+Estimated gas price: 0.200000001 gwei
+
+Estimated total gas used for script: 5486475
+
+Estimated amount required: 0.001097295005486475 ETH
+
+==========================
+
+Transactions saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/broadcast/PasifikaTreasury.s.sol/421614/run-latest.json
+
+Sensitive values saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/cache/PasifikaTreasury.s.sol/421614/run-latest.json
+

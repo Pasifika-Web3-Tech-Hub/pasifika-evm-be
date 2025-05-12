@@ -1,0 +1,40 @@
+Pasifika Linea Deployment Log - Mon May 12 02:52:00 PM +13 2025
+Network: Linea Testnet (Chain ID: 59140)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+No files changed, compilation skipped
+Script ran successfully.
+
+== Logs ==
+  Deploying with pasifika-account address: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8
+  Treasury deployed with admin: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8
+  No marketplace found to register as fee collector
+  No money transfer found to register as fee collector
+  RIF_TOKEN_ADDRESS not set, will use a mock address if needed
+  Deployed new PasifikaMembership at: 0xc249Cd44C746e6e86de2aF04f3c3DCe06F02F572
+  Treasury setup completed with default funds
+  PasifikaTreasury deployed at: 0xe8CC4de8de7502bD175F7016d68a1aCb1D4a1628
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 59141
+
+Estimated gas price: 0.107428007 gwei
+
+Estimated total gas used for script: 8121630
+
+Estimated amount required: 0.00087249052449141 ETH
+
+==========================
+
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+
+Transactions saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/broadcast/PasifikaTreasury.s.sol/59141/run-latest.json
+
+Sensitive values saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/cache/PasifikaTreasury.s.sol/59141/run-latest.json
+

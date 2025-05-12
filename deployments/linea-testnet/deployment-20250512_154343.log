@@ -1,0 +1,32 @@
+Pasifika Linea Deployment Log - Mon May 12 03:43:43 PM +13 2025
+Network: Linea Testnet (Chain ID: 59140)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 2.12s
+Compiler run successful!
+Traces:
+  [9054918] → new PasifikaMoneyTransferScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 45102 bytes of code
+
+  [8487] PasifikaMoneyTransferScript::run()
+    ├─ [0] VM::envAddress("TREASURY_WALLET") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Deployer address:", DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Treasury wallet:", 0xE1a0Ae0FC16CfC6ABf251c9e7FCf6b6B9bde9aAA) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Starting PasifikaMoneyTransfer deployment on Arbitrum...") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::envAddress("ARBITRUM_TOKEN_ADAPTER_ADDRESS") [staticcall]
+    │   └─ ← [Revert] vm.envAddress: environment variable "ARBITRUM_TOKEN_ADAPTER_ADDRESS" not found
+    ├─ [0] VM::startBroadcast()
+    │   └─ ← [Revert] vm.startBroadcast: Failed to decrypt keystore: incorrect password
+    └─ ← [Revert] vm.startBroadcast: Failed to decrypt keystore: incorrect password
+
+
+
+== Logs ==
+  Deployer address: 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
+  Treasury wallet: 0xE1a0Ae0FC16CfC6ABf251c9e7FCf6b6B9bde9aAA
+  Starting PasifikaMoneyTransfer deployment on Arbitrum...

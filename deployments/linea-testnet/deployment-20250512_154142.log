@@ -1,0 +1,37 @@
+Pasifika Linea Deployment Log - Mon May 12 03:41:42 PM +13 2025
+Network: Linea Testnet (Chain ID: 59140)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 3 files with Solc 0.8.20
+Solc 0.8.20 finished in 839.89ms
+Compiler run successful!
+Traces:
+  [1010951] → new LineaTokenAdapterScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 4939 bytes of code
+
+  [736569] LineaTokenAdapterScript::run()
+    ├─ [0] VM::envAddress("ADMIN_ADDRESS") [staticcall]
+    │   └─ ← [Revert] vm.envAddress: environment variable "ADMIN_ADDRESS" not found
+    ├─ [0] console::log("Deploying LineaTokenAdapter with account:", DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::broadcast()
+    │   └─ ← [Return] 
+    ├─ [641532] → new LineaTokenAdapter@0x3e4cAa049cCB9e469975f978A1f8529d37452De7
+    │   └─ ← [Return] 3204 bytes of code
+    ├─ [0] VM::envAddress("LINEA_USDC_ADDRESS") [staticcall]
+    │   └─ ← [Revert] vm.envAddress: environment variable "LINEA_USDC_ADDRESS" not found
+    ├─ [0] VM::broadcast()
+    │   └─ ← [Return] 
+    ├─ [47738] LineaTokenAdapter::addToken(0x1234567890123456789012345678901234567890, "USDC")
+    │   ├─ emit TokenAdded(token: 0x1234567890123456789012345678901234567890, symbol: "USDC")
+    │   └─ ← [Stop] 
+    ├─ [0] VM::broadcast()
+    │   └─ ← [Return] 
+    ├─ [848] LineaTokenAdapter::addToken(0x0000000000000000000000000000000000000000, "ETH")
+    │   └─ ← [Revert] revert: LineaTokenAdapter: token address cannot be zero
+    └─ ← [Revert] revert: LineaTokenAdapter: token address cannot be zero
+
+
+
+== Logs ==
+  Deploying LineaTokenAdapter with account: 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38

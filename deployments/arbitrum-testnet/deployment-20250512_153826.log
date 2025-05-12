@@ -1,0 +1,34 @@
+Pasifika Arbitrum Deployment Log - Mon May 12 03:38:26 PM +13 2025
+Network: Arbitrum Sepolia (Chain ID: 421614)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 1.62s
+Compiler run successful!
+Script ran successfully.
+
+== Logs ==
+  Deploying PasifikaMembership with account: 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
+  Using existing PasifikaTreasury at: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+  PasifikaMembership deployed at: 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517
+  NOTE: To complete setup, the admin should manually add the membership contract
+  as a fee collector in the treasury using the treasury's addFeeCollector function.
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 421614
+
+Estimated gas price: 0.200000001 gwei
+
+Estimated total gas used for script: 3170134
+
+Estimated amount required: 0.000634026803170134 ETH
+
+==========================
+
+Transactions saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/broadcast/PasifikaMembershipAlias.s.sol/421614/run-latest.json
+
+Sensitive values saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/cache/PasifikaMembershipAlias.s.sol/421614/run-latest.json
+

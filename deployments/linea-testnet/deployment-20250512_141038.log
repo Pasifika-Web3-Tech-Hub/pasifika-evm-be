@@ -1,0 +1,53 @@
+Pasifika Linea Deployment Log - Mon May 12 02:10:38 PM +13 2025
+Network: Linea Testnet (Chain ID: 59140)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+No files changed, compilation skipped
+Script ran successfully.
+
+== Logs ==
+  Deploying with pasifika-account address: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8
+  Treasury deployed with admin: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8
+  No marketplace found to register as fee collector
+  No money transfer found to register as fee collector
+  RIF_TOKEN_ADDRESS not set, will use a mock address if needed
+  Deployed new PasifikaMembership at: 0x023377e170BF90c417c3E04139821750028bC460
+  Treasury setup completed with default funds
+  PasifikaTreasury deployed at: 0xA53AB2Bf280f2b0068430205558E180023b64A79
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 59141
+
+Estimated gas price: 0.107428007 gwei
+
+Estimated total gas used for script: 8121599
+
+Estimated amount required: 0.000872487194223193 ETH
+
+==========================
+
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+
+Transactions saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/broadcast/PasifikaTreasury.s.sol/59141/run-latest.json
+
+Sensitive values saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/cache/PasifikaTreasury.s.sol/59141/run-latest.json
+
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 1.54s
+Compiler run successful!
+Traces:
+  [5366946] → new PasifikaMembershipScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 26692 bytes of code
+
+  [2947] PasifikaMembershipScript::run()
+    ├─ [0] VM::envUint("PRIVATE_KEY") [staticcall]
+    │   └─ ← [Revert] vm.envUint: environment variable "PRIVATE_KEY" not found
+    └─ ← [Revert] vm.envUint: environment variable "PRIVATE_KEY" not found
+
+

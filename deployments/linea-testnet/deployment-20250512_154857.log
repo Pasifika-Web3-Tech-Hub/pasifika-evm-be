@@ -1,0 +1,70 @@
+Pasifika Linea Deployment Log - Mon May 12 03:48:57 PM +13 2025
+Network: Linea Testnet (Chain ID: 59140)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 2.39s
+Compiler run successful!
+Traces:
+  [2662986] → new PasifikaMoneyTransferLineaScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 13190 bytes of code
+
+  [1875580] PasifikaMoneyTransferLineaScript::run()
+    ├─ [0] VM::envAddress("ADMIN_ADDRESS") [staticcall]
+    │   └─ ← [Revert] vm.envAddress: environment variable "ADMIN_ADDRESS" not found
+    ├─ [0] VM::envAddress("TREASURY_WALLET") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Deployer address:", DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Treasury wallet:", 0xE1a0Ae0FC16CfC6ABf251c9e7FCf6b6B9bde9aAA) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Starting PasifikaMoneyTransfer deployment on Linea...") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::envAddress("LINEA_TOKEN_ADAPTER_ADDRESS") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Using existing LineaTokenAdapter at:", 0x3e4cAa049cCB9e469975f978A1f8529d37452De7) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::envAddress("LINEA_TREASURY_ADDRESS") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Using existing PasifikaTreasury at:", 0xe8CC4de8de7502bD175F7016d68a1aCb1D4a1628) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Deploying PasifikaMoneyTransfer...") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::broadcast()
+    │   └─ ← [Return] 
+    ├─ [1759752] → new PasifikaMoneyTransfer@0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40
+    │   ├─ emit RoleGranted(role: 0x0000000000000000000000000000000000000000000000000000000000000000, account: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0x6c0757dc3e6b28b2580c03fd9e96c274acf4f99d91fbec9b418fa1d70604ff1c, account: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   ├─ emit RoleGranted(role: 0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a, account: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8, sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   └─ ← [Return] 6982 bytes of code
+    ├─ [0] console::log("PasifikaMoneyTransfer deployed at:", PasifikaMoneyTransfer: [0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Adding MoneyTransfer as fee collector to Treasury...") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::broadcast()
+    │   └─ ← [Return] 
+    ├─ [32059] 0xe8CC4de8de7502bD175F7016d68a1aCb1D4a1628::addFeeCollector(PasifikaMoneyTransfer: [0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40])
+    │   ├─ emit RoleGranted(role: 0x2dca0f5ce7e75a4b43fe2b0d6f5d0b7a2bf92ecf89f8f0aa17b8308b67038821, account: PasifikaMoneyTransfer: [0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40], sender: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8)
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("Initializing treasury integration...") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::broadcast()
+    │   └─ ← [Return] 
+    ├─ [3963] PasifikaMoneyTransfer::initializeTreasury()
+    │   ├─ [2868] 0xe8CC4de8de7502bD175F7016d68a1aCb1D4a1628::addFeeCollector(PasifikaMoneyTransfer: [0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40])
+    │   │   └─ ← [Revert] AccessControlUnauthorizedAccount(0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40, 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775)
+    │   └─ ← [Revert] AccessControlUnauthorizedAccount(0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40, 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775)
+    └─ ← [Revert] AccessControlUnauthorizedAccount(0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40, 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775)
+
+
+
+== Logs ==
+  Deployer address: 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
+  Treasury wallet: 0xE1a0Ae0FC16CfC6ABf251c9e7FCf6b6B9bde9aAA
+  Starting PasifikaMoneyTransfer deployment on Linea...
+  Using existing LineaTokenAdapter at: 0x3e4cAa049cCB9e469975f978A1f8529d37452De7
+  Using existing PasifikaTreasury at: 0xe8CC4de8de7502bD175F7016d68a1aCb1D4a1628
+  Deploying PasifikaMoneyTransfer...
+  PasifikaMoneyTransfer deployed at: 0x3f4501A82ba208cebdcfC182bF9baC227aFd4A40
+  Adding MoneyTransfer as fee collector to Treasury...
+  Initializing treasury integration...

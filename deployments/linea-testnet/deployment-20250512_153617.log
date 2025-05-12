@@ -1,0 +1,24 @@
+Pasifika Linea Deployment Log - Mon May 12 03:36:17 PM +13 2025
+Network: Linea Testnet (Chain ID: 59140)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+No files changed, compilation skipped
+Traces:
+  [5368146] → new PasifikaMembershipScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 26698 bytes of code
+
+  [29231] PasifikaMembershipScript::run()
+    ├─ [0] VM::envUint("PRIVATE_KEY") [staticcall]
+    │   └─ ← [Revert] vm.envUint: environment variable "PRIVATE_KEY" not found
+    ├─ [0] VM::envAddress("PASIFIKA_TREASURY_ADDRESS") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Using existing PasifikaTreasury at:", 0xe8CC4de8de7502bD175F7016d68a1aCb1D4a1628) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::startBroadcast(<pk>)
+    │   └─ ← [Revert] vm.startBroadcast: private key cannot be 0
+    └─ ← [Revert] vm.startBroadcast: private key cannot be 0
+
+
+
+== Logs ==
+  Using existing PasifikaTreasury at: 0xe8CC4de8de7502bD175F7016d68a1aCb1D4a1628

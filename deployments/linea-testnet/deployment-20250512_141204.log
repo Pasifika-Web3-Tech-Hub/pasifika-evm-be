@@ -1,0 +1,62 @@
+Pasifika Linea Deployment Log - Mon May 12 02:12:04 PM +13 2025
+Network: Linea Testnet (Chain ID: 59140)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+No files changed, compilation skipped
+Script ran successfully.
+
+== Logs ==
+  Deploying with pasifika-account address: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8
+  Treasury deployed with admin: 0x58a60a9cBEDC8E7d3f9ec9a96312BEDe8fc147b8
+  No marketplace found to register as fee collector
+  No money transfer found to register as fee collector
+  RIF_TOKEN_ADDRESS not set, will use a mock address if needed
+  Deployed new PasifikaMembership at: 0x1758b29884F9dAA2c7ED56c9085f193c6A8a0B1C
+  Treasury setup completed with default funds
+  PasifikaTreasury deployed at: 0xDc506682Fabc08669322f2b2F9c252D48F0b4D6d
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 59141
+
+Estimated gas price: 0.107428007 gwei
+
+Estimated total gas used for script: 8121630
+
+Estimated amount required: 0.00087249052449141 ETH
+
+==========================
+
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+
+Transactions saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/broadcast/PasifikaTreasury.s.sol/59141/run-latest.json
+
+Sensitive values saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/cache/PasifikaTreasury.s.sol/59141/run-latest.json
+
+Compiling 1 files with Solc 0.8.20
+Solc 0.8.20 finished in 1.62s
+Compiler run successful!
+Traces:
+  [5368146] → new PasifikaMembershipScript@0x9f7cF1d1F558E57ef88a59ac3D47214eF25B6A06
+    └─ ← [Return] 26698 bytes of code
+
+  [29231] PasifikaMembershipScript::run()
+    ├─ [0] VM::envUint("PRIVATE_KEY") [staticcall]
+    │   └─ ← [Revert] vm.envUint: environment variable "PRIVATE_KEY" not found
+    ├─ [0] VM::envAddress("PASIFIKA_TREASURY_ADDRESS") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] console::log("Using existing PasifikaTreasury at:", 0xDc506682Fabc08669322f2b2F9c252D48F0b4D6d) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::startBroadcast(<pk>)
+    │   └─ ← [Revert] vm.startBroadcast: private key cannot be 0
+    └─ ← [Revert] vm.startBroadcast: private key cannot be 0
+
+
+
+== Logs ==
+  Using existing PasifikaTreasury at: 0xDc506682Fabc08669322f2b2F9c252D48F0b4D6d

@@ -1,0 +1,36 @@
+Pasifika Linea Deployment Log - Mon May 12 03:42:35 PM +13 2025
+Network: Linea Testnet (Chain ID: 59140)
+Wallet: pasifika-account (Unknown)
+----------------------------------------
+Compiling 2 files with Solc 0.8.20
+Solc 0.8.20 finished in 873.11ms
+Compiler run successful!
+Script ran successfully.
+
+== Logs ==
+  Deploying LineaTokenAdapter with account: 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
+  LineaTokenAdapter deployed at: 0x3e4cAa049cCB9e469975f978A1f8529d37452De7
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 59141
+
+Estimated gas price: 0.107428007 gwei
+
+Estimated total gas used for script: 1134437
+
+Estimated amount required: 0.000121870305977059 ETH
+
+==========================
+
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+
+Transactions saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/broadcast/LineaTokenAdapter.s.sol/59141/run-latest.json
+
+Sensitive values saved to: /home/user/Documents/pasifika-web3-tech-hub/pasifika-web3-be/cache/LineaTokenAdapter.s.sol/59141/run-latest.json
+

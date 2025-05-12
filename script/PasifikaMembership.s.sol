@@ -15,7 +15,13 @@ contract PasifikaMembershipScript is Script {
     PasifikaTreasury public treasury;
 
     function run() public {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        // Get the admin address from env var or use the msg.sender as fallback
+        address admin = msg.sender;
+        try vm.envAddress("ADMIN_ADDRESS") returns (address addr) {
+            admin = addr;
+        } catch {
+            // Using msg.sender as admin (the account specified with --account flag)
+        }
 
         // Get PasifikaTreasury address if deployed
         address payable treasuryAddress;
@@ -25,23 +31,20 @@ contract PasifikaMembershipScript is Script {
             console.log("Using existing PasifikaTreasury at:", treasuryAddress);
         } catch {
             // Deploy new PasifikaTreasury
-            vm.startBroadcast(deployerPrivateKey);
-            treasury = new PasifikaTreasury(msg.sender);
+            vm.broadcast();
+            treasury = new PasifikaTreasury(admin);
             treasuryAddress = payable(address(treasury));
-            vm.stopBroadcast();
             console.log("Deployed new PasifikaTreasury at:", treasuryAddress);
         }
 
         // Deploy PasifikaMembership
-        vm.startBroadcast(deployerPrivateKey);
-
+        vm.broadcast();
         membership = new PasifikaMembership(treasuryAddress);
 
         // Add membership as fee collector to treasury
+        vm.broadcast();
         treasury.addFeeCollector(address(membership));
 
         console.log("PasifikaMembership deployed at:", address(membership));
-
-        vm.stopBroadcast();
     }
 }

@@ -3,7 +3,12 @@
 # Supports deployment of all contracts or individual contracts in the correct order
 
 # Load environment variables from .env file
-if [ -f .env.testnet ]; then
+if [ -f .env.arbitrum ]; then
+    echo "Loading configuration from .env.arbitrum file..."
+    set -a
+    source .env.arbitrum
+    set +a
+elif [ -f .env.testnet ]; then
     echo "Loading configuration from .env.testnet file..."
     set -a
     source .env.testnet
@@ -14,9 +19,9 @@ elif [ -f .env ]; then
     source .env
     set +a
 else
-    echo "Error: .env or .env.testnet file not found. Please create one with required variables."
+    echo "Error: .env.arbitrum, .env.testnet, or .env file not found. Please create one with required variables."
     echo "Required variables: WALLET_ALIAS, FEE_RECIPIENT, TREASURY_WALLET"
-    echo "See .env.testnet for a template"
+    echo "See .env.arbitrum for a template"
     exit 1
 fi
 
@@ -142,8 +147,11 @@ save_contract_json() {
         return
     fi
 
-    # Create JSON content
-    cat > "$FE_DIR/${contract_name}.json" << EOF
+    # Create network-specific JSON name
+    local network_suffix="arbitrum"
+    
+    # Create JSON content with network in filename
+    cat > "$FE_DIR/${contract_name}_${network_suffix}.json" << EOF
 {
   "contractName": "${contract_name}",
   "address": "${contract_address}",
@@ -154,18 +162,33 @@ save_contract_json() {
 }
 EOF
 
-    echo "✅ Created ${contract_name} address file: $FE_DIR/${contract_name}.json"
+    echo "✅ Created ${contract_name} address file: $FE_DIR/${contract_name}_${network_suffix}.json"
     
     # Try various potential paths to find the ABI file
+    local network_abi="$FE_DIR/${contract_name}_arbitrum_ABI.json"
+    local standard_abi="$FE_DIR/${contract_name}_ABI.json"
+    
     if [ -f "out/${script_name}.sol/${contract_name}.json" ]; then
-        cp "out/${script_name}.sol/${contract_name}.json" "$FE_DIR/${contract_name}_ABI.json"
-        echo "✅ Copied ${contract_name} ABI to: $FE_DIR/${contract_name}_ABI.json"
+        # Save network-specific ABI
+        cp "out/${script_name}.sol/${contract_name}.json" "$network_abi"
+        echo "✅ Copied ${contract_name} ABI to: $network_abi"
+        
+        # Also save standard ABI for backward compatibility
+        cp "out/${script_name}.sol/${contract_name}.json" "$standard_abi"
     elif [ -f "out/${contract_name}.sol/${contract_name}.json" ]; then
-        cp "out/${contract_name}.sol/${contract_name}.json" "$FE_DIR/${contract_name}_ABI.json"
-        echo "✅ Copied ${contract_name} ABI to: $FE_DIR/${contract_name}_ABI.json"
+        # Save network-specific ABI
+        cp "out/${contract_name}.sol/${contract_name}.json" "$network_abi"
+        echo "✅ Copied ${contract_name} ABI to: $network_abi"
+        
+        # Also save standard ABI for backward compatibility
+        cp "out/${contract_name}.sol/${contract_name}.json" "$standard_abi"
     elif [ -f "out/${script_name}/${contract_name}.json" ]; then
-        cp "out/${script_name}/${contract_name}.json" "$FE_DIR/${contract_name}_ABI.json"
-        echo "✅ Copied ${contract_name} ABI to: $FE_DIR/${contract_name}_ABI.json"
+        # Save network-specific ABI
+        cp "out/${script_name}/${contract_name}.json" "$network_abi"
+        echo "✅ Copied ${contract_name} ABI to: $network_abi"
+        
+        # Also save standard ABI for backward compatibility
+        cp "out/${script_name}/${contract_name}.json" "$standard_abi"
     else
         echo "Warning: ABI file not found for ${contract_name}. Tried paths:"
         echo "- out/${script_name}.sol/${contract_name}.json"
@@ -226,16 +249,32 @@ deploy_token_adapter() {
 # Deploy PasifikaArbitrumNode
 deploy_node() {
     echo "Deploying PasifikaArbitrumNode..."
-    echo "Command: forge script script/ArbitrumDeployment.s.sol:ArbitrumDeploymentScript --rpc-url $ACTIVE_RPC_URL --account $WALLET_ALIAS --broadcast -vvv"
     
-    # Create temporary file to capture output
-    local temp_log=$(mktemp)
-    
-    # Run deployment and capture output
-    forge script script/ArbitrumDeployment.s.sol:ArbitrumDeploymentScript $COMMON_DEPLOY_FLAGS | tee $temp_log
-    
-    # Extract address from output
-    local address=$(grep -o "PasifikaArbitrumNode deployed at: 0x[a-fA-F0-9]\{40\}" $temp_log | tail -1 | cut -d ' ' -f 4)
+    # Check if a dedicated script exists for the ArbitrumNode
+    if [ -f "script/PasifikaArbitrumNode.s.sol" ]; then
+        echo "Command: forge script script/PasifikaArbitrumNode.s.sol:PasifikaArbitrumNodeScript $COMMON_DEPLOY_FLAGS"
+        
+        # Create temporary file to capture output
+        local temp_log=$(mktemp)
+        
+        # Run deployment and capture output
+        forge script script/PasifikaArbitrumNode.s.sol:PasifikaArbitrumNodeScript $COMMON_DEPLOY_FLAGS | tee $temp_log
+        
+        # Extract address from output
+        local address=$(grep -o "PasifikaArbitrumNode deployed to: 0x[a-fA-F0-9]\{40\}" $temp_log | cut -d ' ' -f 4)
+    else
+        # Fall back to the legacy ArbitrumDeployment script
+        echo "Command: forge script script/ArbitrumDeployment.s.sol:ArbitrumDeploymentScript $COMMON_DEPLOY_FLAGS"
+        
+        # Create temporary file to capture output
+        local temp_log=$(mktemp)
+        
+        # Run deployment and capture output
+        forge script script/ArbitrumDeployment.s.sol:ArbitrumDeploymentScript $COMMON_DEPLOY_FLAGS | tee $temp_log
+        
+        # Extract address from output with legacy format
+        local address=$(grep -o "PasifikaArbitrumNode deployed at: 0x[a-fA-F0-9]\{40\}" $temp_log | tail -1 | cut -d ' ' -f 4)
+    fi
     
     # Append to main log
     cat $temp_log >> $LOG_FILE
@@ -244,8 +283,10 @@ deploy_node() {
     if [ ! -z "$address" ]; then
         echo "✅ PasifikaArbitrumNode deployed at: $address"
         update_env_var "ARBITRUM_NODE_ADDRESS" "$address"
-        save_contract_json "PasifikaArbitrumNode" "$address" "ArbitrumDeployment"
+        update_env_var "PASIFIKA_ARBITRUM_NODE_ADDRESS" "$address"
+        save_contract_json "PasifikaArbitrumNode" "$address" "PasifikaArbitrumNode"
         export ARBITRUM_NODE_ADDRESS=$address
+        export PASIFIKA_ARBITRUM_NODE_ADDRESS=$address
         return 0
     else
         echo "❌ Failed to deploy PasifikaArbitrumNode"
@@ -336,16 +377,16 @@ deploy_money_transfer() {
     
     treasury_address=${ARBITRUM_TREASURY_ADDRESS:-$PASIFIKA_TREASURY_ADDRESS}
 
-    echo "Deploying PasifikaMoneyTransfer..."
+    echo "Deploying PasifikaMoneyTransfer on Arbitrum..."
     echo "- Token Adapter: ${ARBITRUM_TOKEN_ADAPTER_ADDRESS}"
     echo "- Treasury: ${treasury_address}"
-    echo "Command: forge script script/PasifikaMoneyTransferAlias.s.sol:PasifikaMoneyTransferAliasScript $COMMON_DEPLOY_FLAGS"
+    echo "Command: forge script script/PasifikaMoneyTransferArbitrum.s.sol:PasifikaMoneyTransferArbitrumScript $COMMON_DEPLOY_FLAGS"
     
     # Create temporary file to capture output
     local temp_log=$(mktemp)
     
     # Run deployment and capture output
-    forge script script/PasifikaMoneyTransferAlias.s.sol:PasifikaMoneyTransferAliasScript $COMMON_DEPLOY_FLAGS | tee $temp_log
+    forge script script/PasifikaMoneyTransferArbitrum.s.sol:PasifikaMoneyTransferArbitrumScript $COMMON_DEPLOY_FLAGS | tee $temp_log
     
     # Extract address from output
     local address=$(grep -o "PasifikaMoneyTransfer deployed at: 0x[a-fA-F0-9]\{40\}" $temp_log | tail -1 | cut -d ' ' -f 4)
