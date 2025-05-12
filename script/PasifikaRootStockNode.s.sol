@@ -49,7 +49,7 @@ contract PasifikaRootStockNodeScript is Script {
         try vm.envAddress("INITIAL_NODE_OPERATOR") returns (address initialOperator) {
             try vm.envUint("INITIAL_NODE_STAKE") returns (uint256 initialStake) {
                 if (initialStake > 0 && address(this).balance >= initialStake) {
-                    rootstockNode.registerNode{value: initialStake}(initialOperator);
+                    rootstockNode.registerNode{ value: initialStake }(initialOperator);
                     console.log("Registered initial node operator:", initialOperator);
                     console.log("Initial stake (RBTC):", initialStake);
                 }
