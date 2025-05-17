@@ -17,8 +17,8 @@ contract ProfitSharingTest is Test {
     address member2;
     address member3;
 
-    uint256 initialTreasuryAmount = 10 ether; // 10 ETH for treasury
-    uint256 membershipFee = 0.005 ether;
+    uint256 initialTreasuryAmount = 10 ether; // 10 ETH for treasury (would be 0.2 RBTC on RootStock)
+    uint256 membershipFee = 0.005 ether; // 0.005 ETH on Arbitrum/Linea, equivalent to 0.0001 RBTC on RootStock
 
     // Year constants for testing
     uint256 year1970 = 0; // Epoch start

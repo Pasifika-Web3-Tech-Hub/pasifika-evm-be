@@ -1,4 +1,4 @@
-# Pasifika Web3 Tech Hub - Multi-Network Implementation
+# Pasifika Web3 Tech Hub - Multi-Network Exchange Implementation
 
 <div align="center">
   <img src="./pasifika.png" alt="Pasifika" width="300" height="300" />
@@ -10,7 +10,7 @@
 
 ## Latest Updates (May 2025)
 
-**Now with multi-network support for Arbitrum, Linea, and RootStock!**
+**Now with multi-network support for Linea, RootStock, and Arbitrum!**
 
 ### Arbitrum Deployment
 
@@ -32,34 +32,34 @@ All contract addresses and ABIs are saved in the frontend directory with network
 
 At the heart of Pasifika Web3 Tech Hub is a philosophical principle that has guided Pacific Island communities for generations: **"If we take care of our own, they will take care of us."** This powerful concept of reciprocity and community care isn't just a nice sentiment, it's the architectural blueprint for our entire system.
 
-Ethereum's ecosystem, with its focus on decentralization, community governance, and shared prosperity, provides the perfect technological expression of these Pacific values. When we examined various blockchain platforms, Ethereum EVM based chains aligned naturally with our cultural ethos.
+EVM Compatible networks, with their focus on decentralization, community governance, and shared prosperity, provide the perfect technological expression of these Pacific values. When we examined various blockchain platforms, those supporting EVM compatibility aligned naturally with our cultural ethos while enabling cross-chain interoperability.
 
-## Technical Advantages of Our Multi-Chain Approach
+## Technical Advantages of Our Interoperability Approach
 
-Our platform operates across three complementary Ethereum EVM based chains: Linea, RSK (Rootstock), and Arbitrum. This wasn't a random selection, but a deliberate strategy to leverage the unique strengths of each:
+Our Pasifika Exchange operates across three complementary EVM Compatible chains: Linea, RSK (Rootstock), and Arbitrum. This wasn't a random selection, but a deliberate strategy to leverage the unique strengths of each while ensuring seamless interoperability for the first dedicated digital asset exchange for Pacific Islands:
 
 ### Linea: Scaling With Zero Knowledge
-Linea's zkEVM Layer-2 technology dramatically reduces transaction costs while maintaining Ethereum's robust security model. For communities where every fraction of a cent matters, this efficiency is crucial for financial inclusion.
+Linea's zkEVM Layer-2 technology dramatically reduces transaction costs while maintaining robust EVM compatibility and security. For communities where every fraction of a cent matters, this efficiency is crucial for financial inclusion.
 
 ### RSK: Bitcoin Integration with Smart Contracts
 As a Bitcoin sidechain, RSK allows us to work with RBTC (Bitcoin on RSK) while leveraging the programmability of smart contracts. Our treasury was initially seeded with 27,281 RIF tokens received from the RSK Hactivator program, showcasing the real-world support this technology brings to Pacific innovation.
 
-### Arbitrum: Optimistic Rollups for Broader Integration
-Arbitrum's optimistic rollup technology gives us additional scaling options and ensures our platform remains connected to the broader Ethereum ecosystem, expanding opportunities for Pacific Islanders.
+### Arbitrum: Optimistic Rollups for Scalability
+Arbitrum's optimistic rollup technology provides exceptional throughput capabilities and security inherited from Ethereum, expanding trading options available to Pacific Islanders through the Pasifika Exchange.
 
-## Building a Community Owned Financial System
+## Building the First Pacific Islands Exchange
 
-The technical architecture of our platform directly implements our community values through smart contracts:
+The technical architecture of our platform directly implements our community values through smart contracts and exchange functionality:
 
-- **Tiered Membership System**: We've created a simplified 3-tier structure (Guest, Member, Node Operator) with graduated fee structures (1%, 0.5%, 0.25%) that reward deeper community involvement.
+- **Exchange Features**: Our platform offers token swapping, liquidity provision, and cross-chain trading capabilities specifically designed for Pacific Island users and their unique needs.
 
-- **Annual Profit Sharing**: Every year from December 27 to December 24 (Pasifika Financial Year), 50% of treasury profits are distributed equally to all members, ensuring the community directly benefits from the platform's success.
+- **Tiered Membership System**: We've created a simplified 3-tier structure (Guest, Member, Node Operator) with graduated fee structures (1%, 0.5%, 0.25%) that reward deeper community involvement with reduced trading fees.
 
-- **Transparent Fund Management**: Our Pasifika Treasury contract enables transparent, secure management of community funds with multi-signature controls and clearly defined allocation processes.
+- **Transparent Fund Management**: Our Pasifika Treasury contract enables transparent, secure management of exchange funds with multi-signature controls and clearly defined allocation processes.
 
 ## Beyond the Technology: Cultural Significance
 
-While the technical implementations are impressive, what truly sets our approach apart is how these Ethereum EVM based technologies allow us to encode Pacific Island cultural values into digital infrastructure:
+While the technical implementations are impressive, what truly sets our approach apart is how these EVM Compatible technologies allow us to encode Pacific Island cultural values into digital infrastructure while enabling seamless interaction across multiple blockchain networks:
 
 - **Reciprocity**: Just as traditional Pacific economies function on gift giving and mutual support, our profit sharing mechanism ensures value flows back to community members.
 
@@ -92,16 +92,16 @@ This event exemplifies our commitment to community wealth-sharing and ensuring t
 ## Technical Specifications
 
 - **Blockchains**:
-  - Arbitrum - Ethereum Layer 2 scaling solution (ETH)
-  - Linea - Ethereum Layer 2 zkEVM (ETH)
-  - RootStock - Bitcoin sidechain (RBTC)
+  - Arbitrum - EVM Compatible Layer 2 scaling solution (ETH)
+  - **Linea** - Layer 2 zkEVM with EVM Compatibility (ETH)
+  - **RootStock** - EVM Compatible Bitcoin sidechain (RBTC)
 - **Development Framework:** Foundry
 - **Solidity Version:** 0.8.19 and 0.8.20
 - **OpenZeppelin:** v5.3.0
 
-## Network-Specific Components
+## Cross-Chain Components
 
-The backend consists of network-specific implementations for each supported blockchain:
+The backend consists of interoperable implementations for each supported blockchain network:
 
 ### 3-Tier System
 
@@ -114,7 +114,7 @@ We've simplified our membership and fee structure to a 3-tier system:
 
 2. **Tier 1: Member**
    - 0.5% fee on all transactions (50% discount)
-   - Requires membership (0.005 ETH)
+   - Requires membership (0.005 ETH on Arbitrum/Linea, 0.0001 RBTC on RootStock)
 
 3. **Tier 2: Member Node Operator**
    - 0.25% fee on all transactions (75% discount)
@@ -148,7 +148,7 @@ Each node contract provides:
   - Validator status tracking
   - Role-based access control
 
-### Core Smart Contracts (Cross-Network)
+### Core Smart Contracts (Cross-Chain Interoperability)
 
 - **PasifikaMembership Contract**: Membership management with:
   - Network-adaptive membership registration (0.005 ETH on Arbitrum/Linea, 0.0001 RBTC on RootStock)
@@ -182,9 +182,9 @@ Our membership system is designed to provide clear benefits to platform particip
    - Eligible members receive an equal share of 50% of treasury profits
    - Distribution happens at the end of the Pasifika Financial Year
 
-3. **Platform Governance Rights**:
-   - Members gain voting rights on platform decisions
-   - Node operators receive additional voting weight
+3. **Exchange Benefits**:
+   - Members gain access to enhanced trading features
+   - Node operators receive priority access to exchange services
 
 ### Deployment Process
 
@@ -266,10 +266,10 @@ Our contracts implement best practices for security:
 
 Our frontend provides seamless support for multiple networks:
 
-- **Network Detection**: Automatically detects the current network
-- **Network Switching**: Allows users to switch between supported networks
-- **Contract Loading**: Dynamically loads the appropriate contract addresses and ABIs
-- **Unified Interface**: Consistent UX across all networks
+- **Network Detection**: Automatically detects the current blockchain network
+- **Cross-Chain Switching**: Allows users to seamlessly switch between supported EVM Compatible networks
+- **Contract Loading**: Dynamically loads the appropriate contract addresses and ABIs across chains
+- **Unified Interface**: Consistent UX across all blockchain networks with full interoperability
 
 The contract loader utility (`deployed_contracts/contract-loader.js`) provides:
 

@@ -111,7 +111,7 @@ contract PasifikaNFTTest is Test {
 
         // Verify royalty receiver and the reduced amount for member
         assertEq(memberRoyaltyReceiver, creator);
-        // 0.5% of 1 ether = 0.005 ether
+        // 0.5% of 1 ether = 0.005 ether (equivalent to 0.0001 RBTC on RootStock)
         assertEq(memberRoyaltyAmount, (salePrice * memberRoyaltyPercent) / 10000);
 
         vm.stopPrank();
