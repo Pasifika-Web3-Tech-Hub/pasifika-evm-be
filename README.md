@@ -92,9 +92,9 @@ This event exemplifies our commitment to community wealth-sharing and ensuring t
 ## Technical Specifications
 
 - **Blockchains**:
-  - Arbitrum - EVM Compatible Layer 2 scaling solution (ETH)
-  - **Linea** - Layer 2 zkEVM with EVM Compatibility (ETH)
+  - **Arbitrum** - EVM Compatible Layer 2 scaling solution (ETH)
   - **RootStock** - EVM Compatible Bitcoin sidechain (RBTC)
+  - **Linea** - Layer 2 zkEVM with EVM Compatibility (ETH)
 - **Development Framework:** Foundry
 - **Solidity Version:** 0.8.19 and 0.8.20
 - **OpenZeppelin:** v5.3.0
