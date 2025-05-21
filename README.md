@@ -10,21 +10,7 @@
 
 ## Latest Updates (May 2025)
 
-**Now with multi-network support for Linea, RootStock, and Arbitrum!**
-
-### Arbitrum Deployment
-
-| Contract | Address |
-|----------|---------|
-| ArbitrumTokenAdapter | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
-| PasifikaArbitrumNode | 0xc79C57a047AD9B45B70D85000e9412C61f8fE336 |
-| PasifikaTreasury | 0x96F1C4fE633bD7fE6DeB30411979bE3d0e2246b4 |
-| PasifikaMembership | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
-| PasifikaMoneyTransfer | 0x80d3c57b95a2fca3900f3EAC71196Bf133aaa517 |
-
-### Linea & RootStock
-
-Ready for deployment with network-specific scripts. See the [Multi-Network Deployment](#multi-network-deployment) section.
+**Now with multi-network support for RootStock, Linea, and Arbitrum!**
 
 All contract addresses and ABIs are saved in the frontend directory with network-specific identifiers for easy integration.
 
@@ -38,14 +24,14 @@ EVM Compatible networks, with their focus on decentralization, community governa
 
 Our Pasifika Exchange operates across three complementary EVM Compatible chains: Linea, RSK (Rootstock), and Arbitrum. This wasn't a random selection, but a deliberate strategy to leverage the unique strengths of each while ensuring seamless interoperability for the first dedicated digital asset exchange for Pacific Islands:
 
-### Linea: Scaling With Zero Knowledge
-Linea's zkEVM Layer-2 technology dramatically reduces transaction costs while maintaining robust EVM compatibility and security. For communities where every fraction of a cent matters, this efficiency is crucial for financial inclusion.
-
 ### RSK: Bitcoin Integration with Smart Contracts
 As a Bitcoin sidechain, RSK allows us to work with RBTC (Bitcoin on RSK) while leveraging the programmability of smart contracts. Our treasury was initially seeded with 27,281 RIF tokens received from the RSK Hactivator program, showcasing the real-world support this technology brings to Pacific innovation.
 
 ### Arbitrum: Optimistic Rollups for Scalability
 Arbitrum's optimistic rollup technology provides exceptional throughput capabilities and security inherited from Ethereum, expanding trading options available to Pacific Islanders through the Pasifika Exchange.
+
+### Linea: Scaling With Zero Knowledge
+Linea's zkEVM Layer-2 technology dramatically reduces transaction costs while maintaining robust EVM compatibility and security. For communities where every fraction of a cent matters, this efficiency is crucial for financial inclusion.
 
 ## Building the First Pacific Islands Exchange
 
@@ -71,9 +57,9 @@ While the technical implementations are impressive, what truly sets our approach
 
 The Pasifika backend is a decentralized physical infrastructure network (DePIN) designed for Pacific Island communities. This implementation supports multiple networks:
 
+- **RootStock (RSK)**: Bitcoin sidechain with smart contract capabilities
 - **Arbitrum**: Ethereum Layer-2 scaling solution with low gas fees
 - **Linea**: Ethereum Layer-2 zkEVM for high throughput and security
-- **RootStock (RSK)**: Bitcoin sidechain with smart contract capabilities
 
 This multi-network approach provides flexibility, resilience, and increased accessibility for Pacific Island communities.
 
@@ -92,8 +78,8 @@ This event exemplifies our commitment to community wealth-sharing and ensuring t
 ## Technical Specifications
 
 - **Blockchains**:
-  - **Arbitrum** - EVM Compatible Layer 2 scaling solution (ETH)
   - **RootStock** - EVM Compatible Bitcoin sidechain (RBTC)
+  - **Arbitrum** - EVM Compatible Layer 2 scaling solution (ETH)
   - **Linea** - Layer 2 zkEVM with EVM Compatibility (ETH)
 - **Development Framework:** Foundry
 - **Solidity Version:** 0.8.19 and 0.8.20
@@ -126,9 +112,9 @@ The smart contract system leverages the native assets of the Arbitrum network:
 
 ### Network-Specific Adapters
 
+- **RootstockTokenAdapter**: Implementation for RootStock using RBTC
 - **ArbitrumTokenAdapter**: Implementation for Arbitrum using ETH
 - **LineaTokenAdapter**: Implementation for Linea using ETH
-- **RootstockTokenAdapter**: Implementation for RootStock using RBTC
 
 Each adapter handles:
   - User tier management
@@ -138,9 +124,9 @@ Each adapter handles:
 
 ### Network Node Contracts
 
+- **PasifikaRootstockNode**: Node management for RootStock
 - **PasifikaArbitrumNode**: Node management for Arbitrum
 - **PasifikaLineaNode**: Node management for Linea
-- **PasifikaRootstockNode**: Node management for RootStock
 
 Each node contract provides:
   - Node registration and activation
@@ -206,28 +192,28 @@ The deployment process is streamlined with our comprehensive deployment script a
 
    ```bash
    # Deploy all contracts to a specific network
+   $ ./deploy/network-deploy.sh rootstock all
    $ ./deploy/network-deploy.sh arbitrum all
    $ ./deploy/network-deploy.sh linea all
-   $ ./deploy/network-deploy.sh rootstock all
 
    # Deploy individual contracts to a specific network
+   $ ./deploy/network-deploy.sh rootstock money-transfer
    $ ./deploy/network-deploy.sh arbitrum treasury
    $ ./deploy/network-deploy.sh linea membership
-   $ ./deploy/network-deploy.sh rootstock money-transfer
    ```
 
    Each network has its own deployment script and environment configuration:
    
    ```bash
    # Network-specific deployment scripts
+   ./deploy/rootstock-deploy.sh
    ./deploy/arbitrum-deploy.sh
    ./deploy/linea-deploy.sh
-   ./deploy/rootstock-deploy.sh
    
    # Network-specific environment files
+   .env.rootstock
    .env.arbitrum
    .env.linea
-   .env.rootstock
    ```
 
 4. **Configuration**:
@@ -238,7 +224,7 @@ The deployment process is streamlined with our comprehensive deployment script a
    - Creates comprehensive deployment logs
    - Configures network-specific parameters
 
-For testnet deployments, we use network-specific environment files (`.env.linea`, `.env.rootstock`, `.env.arbitrum`) with Foundry's keystore for secure wallet management.
+For testnet deployments, we use network-specific environment files (`.env.rootstock`,.env.linea`, `.env.arbitrum`) with Foundry's keystore for secure wallet management.
 
 ### Post-Deployment Configuration
 
